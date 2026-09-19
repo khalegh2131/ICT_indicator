@@ -1,0 +1,11 @@
+Mss,Sweep,Disp,Fvg,Ob,ZoneInOte,LegAligned,Preferred,ExpectModel
+true,true,true,true,true,true,true,0,ICT2022
+false,true,true,true,true,true,true,0,BOS_FVG_OB
+false,true,false,false,false,true,false,0,SWEEP_ENTRY
+false,false,false,false,false,true,true,0,OTE_ONLY
+false,false,false,false,false,false,false,0,NONE
+true,true,true,false,false,false,false,1,NONE
+false,false,false,false,false,true,true,4,OTE_ONLY
+false,false,true,true,true,false,false,2,BOS_FVG_OB
+false,true,false,false,false,true,false,3,SWEEP_ENTRY
+false,true,false,false,false,true,false,2,NONE

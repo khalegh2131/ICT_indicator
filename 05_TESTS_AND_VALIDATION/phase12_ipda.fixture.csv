@@ -1,0 +1,7 @@
+Days,Copied,ExpectRegistered
+20,20,true
+20,19,false
+40,40,true
+40,39,false
+60,60,true
+60,10,false

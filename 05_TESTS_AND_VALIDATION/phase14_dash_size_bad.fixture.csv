@@ -1,0 +1,4 @@
+rows,lh,maxRowW,expectedWidth,expectedHeight
+1,16,20,120,24
+41,16,420,420,640
+0,16,0,200,100

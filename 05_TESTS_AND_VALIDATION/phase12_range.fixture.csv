@@ -1,0 +1,7 @@
+Height,MaxHeight,HighTouches,LowTouches,MinTouches,ExpectRange
+2.00,3.00,3,3,3,true
+2.00,3.00,3,2,3,false
+4.00,3.00,5,5,3,false
+1.50,3.00,3,4,3,true
+4.00,3.00,1,9,3,false
+0.00,3.00,3,3,3,false

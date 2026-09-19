@@ -1,0 +1,16 @@
+scenario,op,cap,name,expectedFrozenCount,expectedEvicted,expectedOldestAlive
+A,add,3,f1,1,0,f1
+A,add,3,f2,2,0,f1
+A,add,3,f3,3,0,f1
+A,add,3,f4,3,1,f2
+A,add,3,f5,3,2,f3
+B,add,3,b1,1,0,b1
+B,add,3,b2,2,0,b1
+B,restore,3,b1,1,0,b2
+B,add,3,b3,2,0,b2
+B,add,3,b4,3,0,b2
+B,add,3,b5,3,1,b3
+C,add,1,c1,1,0,c1
+C,add,1,c2,1,1,c2
+D,add,0,d1,1,0,d1
+D,add,0,d2,2,0,d1

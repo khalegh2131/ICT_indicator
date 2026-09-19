@@ -1,0 +1,4 @@
+text,size,maxWidth,expectedSegments,expectedHead,expectedTail
+OB: 1 VALID | 2 BREAKER | 3 MITIG,9,60,1,OB: 1 VALID | 2 BREAKER | 3 MITIG,
+A|B|C|D|E,9,20,3,A|B,C|D|E
+SHORT,9,500,2,SHORT,

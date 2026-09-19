@@ -1,0 +1,13 @@
+# Phase 23 — visual-order fixtures for the Persian render pipeline.
+# Columns: logical ; expected_visual
+# Values are hand-derived from the UBA N1/N2 rules + run reversal + bracket
+# mirroring (a renderer with no bidi draws the "visual" column literally).
+# These are NOT generated from the MQL5 code; they are the oracle.
+سلام ; مالس
+قیمت ; تمیق
+EQL کف ; فک EQL
+سوئپ (BSL) ; (BSL) پئوس
+چرا فیک است؟ ; ؟تسا کیف ارچ
+BOS بالای سقف ; فقس یالاب BOS
+FVG (صعودی) ; (یدوعص) FVG
+HTF Bias: BULL ; HTF Bias: BULL

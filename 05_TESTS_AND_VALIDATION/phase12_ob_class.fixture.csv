@@ -1,0 +1,9 @@
+StructureEventId,LiquidityEventId,Violated,PolarityFlipped,Retest,ExpectState,ExpectKind
+-1,-1,false,false,false,OB_VALID,STANDALONE
+101,-1,false,false,false,OB_VALID,CORE
+101,77,false,false,false,OB_VALID,CORE
+101,-1,true,true,false,OB_BROKEN,CORE
+101,-1,true,true,true,OB_MITIGATION,MITIGATION
+101,77,true,true,true,OB_BREAKER,CORE
+-1,-1,true,true,true,OB_MITIGATION,MITIGATION
+-1,77,true,true,true,OB_BREAKER,STANDALONE

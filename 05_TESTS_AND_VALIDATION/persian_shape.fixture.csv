@@ -1,0 +1,19 @@
+# Phase 23 — shaping oracle. Values come from the Unicode standard
+# (Arabic Presentation Forms-B), NOT from the indicator source:
+#   base;isolated;final;initial;medial      (0 = no such joining form)
+# The validator looks the row up in the MQL5 tables by the base codepoint
+# and compares every form.
+# NOTE on the "final" column: a letter that cannot join to the left carries
+# no final form. The indicator's joiner test is "fina != isol means this
+# letter can connect to the left", so a non-joining letter must repeat its
+# isolated form there (6..=isol) and pin initial/medial to 0. That is why
+# hamza below repeats FE80 instead of "-"; changing it to "-" would make
+# the preceding letter take a dangling initial form.
+0621 ; FE80 ; FE80 ; -    ; -
+0627 ; FE8D ; FE8E ; -    ; -
+0628 ; FE8F ; FE90 ; FE91 ; FE92
+0633 ; FEB1 ; FEB2 ; FEB3 ; FEB4
+0644 ; FEDD ; FEDE ; FEDF ; FEE0
+0645 ; FEE1 ; FEE2 ; FEE3 ; FEE4
+06A9 ; FB8E ; FB8F ; FB90 ; FB91
+06CC ; FBFC ; FBFD ; FBFE ; FBFF

@@ -1,0 +1,5 @@
+Kind,DirAligned,Extreme,AgeBars,DecayBars,ExpectScore
+BREAKER,true,true,0,24,32
+FVG,true,false,0,24,20
+OB,false,true,0,24,38
+REJECTION,false,false,0,24,25

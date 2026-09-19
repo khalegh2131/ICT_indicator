@@ -1,0 +1,5 @@
+Case;Bar;ReadyNow;ChainId;Entry;SL;TP1;Dir;High;Low;Close;ExpectState;ExpectArmed;ExpectInvalid;ExpectTP1
+A-wick-only-beyond-SL;1;1;11;100.0;98.0;102.0;BULL;100.5;99.5;100.2;INVALIDATED;1;1;0
+A-wick-only-beyond-SL;2;0;0;0;0;0;BULL;100.6;97.0;98.5;INVALIDATED;1;1;0
+D-same-bar-both;1;1;11;100.0;98.0;102.0;BULL;100.5;99.5;100.2;TP1_HIT;1;0;1
+D-same-bar-both;2;0;0;0;0;0;BULL;102.5;96.5;97.9;TP1_HIT;1;0;1

@@ -1,0 +1,10 @@
+Dir,Sweep,Displacement,Zone,Context,MinScore,ExpectSMR
+BULLISH,true,true,true,true,3,true
+BULLISH,true,false,true,true,3,true
+BULLISH,true,false,false,false,3,false
+BULLISH,false,false,false,false,3,false
+BEARISH,true,true,false,true,3,true
+BEARISH,true,false,false,true,3,false
+BEARISH,true,true,true,true,4,true
+BEARISH,true,true,false,false,4,false
+BULLISH,true,true,false,false,3,false
