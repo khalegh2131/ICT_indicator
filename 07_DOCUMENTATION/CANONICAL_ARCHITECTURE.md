@@ -17,7 +17,7 @@ Everything below is the target design. As of 2026-09-16 much of it is NOT implem
 | A later bar may set `TOUCHED`, `MITIGATED`, `INVERTED`, `INVALID`, `EXPIRED`, `CONSUMED` | Partial. Only mitigated / inverted / invalidated exist. `TOUCHED` and `CONSUMED` have no representation. |
 | Alerts keyed by event ID and confirmation bar time | Not implemented. There are no alerts; `OnTimer` is empty while a 1-second timer is armed (#72). |
 | `BOS`: close breaks **a protected level** in the current structural direction | Not matching. It breaks the most recent *unbroken swing*, and it is also emitted when no prior trend exists at all (#4). |
-| `REVERSAL_CONFIRMED` rules | **Implemented in phase 11** (#10, #8, #71, #70). One producer: a closed higher-timeframe bar must close beyond the protected external level (`UpdateReversalEngine`), and the confirmation must be fresh (`InpReversalFreshBars`). See the project's technical notes, section 4-0-10. |
+| `REVERSAL_CONFIRMED` rules | **Implemented in phase 11** (#10, #8, #71, #70). One producer: a closed higher-timeframe bar must close beyond the protected external level (`UpdateReversalEngine`), and the confirmation must be fresh (`InpReversalFreshBars`). See the reverse-risk section of the technical documentation. |
 | Exhaustion evidence includes "divergence or momentum contraction" | Absent. Six other observations exist (weak energy, failed extension, opposing close, opposing internal, near DOL, zone failure). |
 | Exhaustion threshold is fully configurable | Partial. Thresholds exist, but the divergence/momentum component of the definition does not. |
 | Setup pipeline ends in "quality score" | Not implemented. There is no quality score and no rejection of low-quality setups (#68). |

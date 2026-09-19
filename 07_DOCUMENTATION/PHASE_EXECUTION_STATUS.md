@@ -194,7 +194,7 @@ No phase is release-ready until executable replay evidence exists. Phase 7 must 
 
 - Session/AMD and PDH/PDL/PWH/PWL were computed with `TimeCurrent()` (server "now") instead of the analyzed bar time; HTF structure and MTF context read the newest bars instead of "as of the analyzed bar" (look-ahead).
 - `UpdateSetup(c[0])` used the forming bar close, violating the closed-bar contract.
-- No chart objects existed for liquidity, sweeps, sessions/killzones, Asian range, MTF levels, or the trade model; only the dashboard was visible (this matches the user report "I see nothing but a dashboard").
+- No chart objects existed for liquidity, sweeps, sessions/killzones, Asian range, MTF levels, or the trade model; only the dashboard was visible (matching the early report "I see nothing but a dashboard").
 - FVG was detected only when a structure event was created (real FVGs on displacement without a break were dropped); there was no iFVG state and `InpFVG_ExpireBars` was unused.
 - OB search used only the candle immediately before displacement instead of the last opposite-colour candle; zone basis was body-only with no option for the full candle range.
 - EQH/EQL created one object per swing pair instead of clustered equal levels.
@@ -227,7 +227,7 @@ No phase is release-ready until executable replay evidence exists. Phase 7 must 
 
 ### Requirement
 
-Hovering over any drawn object must explain, in Persian: what the level/zone is, why it was formed, what makes it valid, what makes it fake or invalid, and how the user can verify the claim themselves.
+Hovering over any drawn object must explain, in Persian: what the level/zone is, why it was formed, what makes it valid, what makes it fake or invalid, and how the reader can verify the claim themselves.
 
 ### Why a panel and not a tooltip
 
@@ -250,12 +250,12 @@ Hovering over any drawn object must explain, in Persian: what the level/zone is,
 
 The earlier `Sync-And-Compile-Canonical.ps1` accepted whatever `.log` it found next to the mirror. With MetaEditor already open, the command-line `/compile` invocation was ignored and the stale log from the previous successful build was read, so a real compile error (`error 199: wrong parameters count` on a single-argument `StringFormat`) was wrongly reported as `0 errors`. The build script now deletes the old log, requires a freshly produced log, requires the `.ex5` to be no older than the source, and prints a warning when MetaEditor is running. Note for operators: MetaEditor deletes the previous `.ex5` when a compile fails, so a missing artifact in the mirror means the last compile did not pass.
 
-## Batch 5: Persian rendering and working-notes file (2026-09-15)
+## Batch 5: Persian rendering and documentation contract (2026-09-15)
 
 - Replaced the invalid literal `\\xNNNN` text encoding with real Persian Unicode characters in the canonical source and preserved UTF-8 BOM encoding.
 - Removed the temporary M0/M1/M2/M3 text probe and its codepoint diagnostics from the indicator.
 - Corrected the Persian shaping join condition so right/left joining capability is checked for both neighboring letters instead of treating every next character as connectable.
-- Added the root working-notes file with the rules this project follows: read-before-edit, canonical-only changes, no deletion without approval, no guessing or unsupported claims, fresh build evidence, and mandatory status updates.
+- Added the mandatory root documentation contract: read-before-edit, canonical-only changes, no deletion without approval, no guessing or unsupported claims, fresh build evidence, and mandatory status updates.
 - Build evidence after this change: `0 errors, 0 warnings`; canonical/package/mirror SHA256 `8CBF3BA37291C2918F1864F671D97A9AFAC7F2D4078505D76F97AB9478DE057B`; artifact timestamp `2026-09-15 22:06:01`.
 - The explanation rows use read-only native `OBJ_EDIT` controls with right alignment and raw Unicode text; the extra separator and visible edit borders are hidden by matching the border color to the panel background. Final MT5 visual confirmation remains pending after reload.
 - **User verification still pending:** remove and re-add the indicator in MT5 so the loaded chart instance uses the new `.ex5`, then confirm Persian readability with a screenshot. No release claim is made until that visual check passes.
@@ -285,11 +285,11 @@ The earlier `Sync-And-Compile-Canonical.ps1` accepted whatever `.log` it found n
 - Historical rebuild evidence is now written to `ICT_Assistant_Canonical_ReplayLedger.csv` when `InpWriteReplayDiagnostics=true`; live events remain isolated in the live ledger.
 - Static fixture checks passed: MTF hierarchy fixture and replay-ledger self-comparison.
 
-### Still not claimable without user MT5 evidence
+### Still not claimable without live MT5 evidence
 
 - Actual XAUUSD history replay versus an independent incremental run.
-- Restart determinism and immutable-event comparison using the user's broker history.
-- Runtime MTF diagnostics with `InpWriteReplayDiagnostics=true` and the user's XAUUSD history.
+- Restart determinism and immutable-event comparison using the broker history.
+- Runtime MTF diagnostics with `InpWriteReplayDiagnostics=true` on live XAUUSD history.
 - Independent full-history versus incremental replay comparison using the generated replay ledger.
 - Proof that M1/M2 conflicts block READY while H4 Bias remains unchanged on actual mixed-timeframe cases.
 
@@ -301,7 +301,7 @@ Hovering any drawn object must show a multi-line Persian panel: what it is, why 
 
 ### Two additional root causes found and fixed
 
-- **Single-line control for multi-line text.** `RenderExplainPanel()` joined every explanation line with `\n` into one `OBJ_EDIT`. `OBJ_EDIT` is single-line in MT5, so all lines after the first were dropped and the per-line color coding (valid/fake/invalid/verify) was lost. Fixed by rendering one native `OBJ_EDIT` per row via a new `ExplainEditRow()` helper: tiled with no gaps, `ALIGN_RIGHT`, `READONLY`, `BGCOLOR`=`BORDER_COLOR`=black so no seams show, and each row keeps its own `OBJPROP_COLOR` from `g_expLineColors`. `g_expPanelRows` now equals the true row count so the clear path deletes every row. This is the same native right-aligned edit control the project's technical notes records as validated for raw Persian; only the one-vs-many-lines usage changed.
+- **Single-line control for multi-line text.** `RenderExplainPanel()` joined every explanation line with `\n` into one `OBJ_EDIT`. `OBJ_EDIT` is single-line in MT5, so all lines after the first were dropped and the per-line color coding (valid/fake/invalid/verify) was lost. Fixed by rendering one native `OBJ_EDIT` per row via a new `ExplainEditRow()` helper: tiled with no gaps, `ALIGN_RIGHT`, `READONLY`, `BGCOLOR`=`BORDER_COLOR`=black so no seams show, and each row keeps its own `OBJPROP_COLOR` from `g_expLineColors`. `g_expPanelRows` now equals the true row count so the clear path deletes every row. This is the same native right-aligned edit control recorded in the documentation as validated for raw Persian; only the one-vs-many-lines usage changed.
 - **Hit-test coordinate drift.** `HitTestExplainObject()` used hand-rolled `PixelXFromTime`/`PixelYFromPrice`, which ignored the chart's vertical scale padding, horizontal shift, and price-axis width. The resulting mouse→object mapping was systematically off (for `OBJ_HLINE` the Y error commonly exceeded the acceptance radius), so hover resolved to nothing. Fixed by converting with MT5's exact `ChartTimePriceToXY` through new helpers `ExplainTimePriceToXY()` and `ExplainVisibleTime()`, covering `OBJ_HLINE`/`OBJ_RECTANGLE`/`OBJ_TREND`/`OBJ_TEXT`; rectangle interiors return distance 0 so zones win over passing lines; minimum tolerance clamped to 4px. The manual pixel helpers were removed.
 - `InpExplainRenderMode` (previously dead) is wired into the render path; default `3` (raw passthrough) is correct for the native edit control, and `2` (manual shaping) remains a no-rebuild fallback if Persian ever renders detached.
 
@@ -336,7 +336,7 @@ So the diagnostic could report a BULLISH owner while the setup engine, using a d
 ### Fix (canonical only)
 
 - Lock the canonical Bias owner to `g_htfBias` everywhere: `AnalyzeMTFContext` (`bias` variable), the `BiasOwner` column AND the H4 segment of `MTFChain` in `PersistReplayDiagnostics`, the dashboard H4 column (`mtfdirs`), and the H4 hover explanation (`ExplainMTFLevel`). `g_mtfContext[0].externalDirection` is retained only as context and for the protected dealing range.
-- `IdToStr` rule cleanup: removed the last four `(int)` casts on 64-bit registry IDs in user-facing text/tooltips (FVG/OB in `ExplainSetup` and `ICTv13_SETUP_TXT`; `sweptByEventId` in the liquidity tooltip) → `IdToStr(long)` with `%s`.
+- `IdToStr` rule cleanup: removed the last four `(int)` casts on 64-bit registry IDs in visible text/tooltips (FVG/OB in `ExplainSetup` and `ICTv13_SETUP_TXT`; `sweptByEventId` in the liquidity tooltip) → `IdToStr(long)` with `%s`.
 - `tools/Validate-MTF-Hierarchy.ps1`: the writer emits a leading header row when the file starts empty, but the validator assumed headerless and would count the header literal as an invalid owner. Added `-notmatch '^BarTime;BiasOwner;'` so both headerless and header-bearing files validate. Re-ran on the existing data: still PASSED (no regression).
 
 ### Validation executed (real runtime data)
@@ -351,16 +351,16 @@ So the diagnostic could report a BULLISH owner while the setup engine, using a d
 - Artifact `.ex5` timestamp `2026-09-16 01:58:50`, newer than source `01:56:52`. MetaEditor was open (PID 24256); the sync script verified freshness rather than trusting exit code.
 - Only the canonical source and the validator tool were edited; package/mirror produced by sync. No files deleted.
 
-### Open gates (unchanged, require the user's MT5)
+### Open gates (unchanged, require live MT5)
 
 - Gates 1 (Full-vs-Incremental) and 2 (Restart determinism / immutability): need TWO independent replay runs on the NEW build. The CSVs above are from an older build; comparing a file to itself is not proof.
 - Gate 3 (broker offset + historical DST): NY/US DST is per-bar correct in code; the single-value broker GMT offset detection is a documented, data-dependent limitation — must not be guessed.
 - Gate 4 (MTF lock): logic verified by inspection AND validator PASSED on real (old-build) data; must be re-confirmed on a fresh replay produced by this build.
 - Gate 5 (visual): remove/re-add the indicator, hover each object family, screenshot the multi-line Persian panel and hover-explain.
 
-## Batch 9: Persian bidi fix proven necessary by user screenshot (2026-09-16)
+## Batch 9: Persian bidi fix proven necessary by chart screenshot (2026-09-16)
 
-### Evidence (user screenshot)
+### Evidence (chart screenshot)
 
 The hover panel now renders multi-line, but MIXED lines (Persian + digits/English/`|`) were misordered/garbled, while pure-Persian fragments ("ثبت شد", "وضعیت") rendered correctly. Conclusion: the `OBJ_EDIT` control performs bidi+shaping but uses an LTR base paragraph, so only mixed-direction lines break.
 
@@ -375,7 +375,7 @@ The hover panel now renders multi-line, but MIXED lines (Persian + digits/Englis
 - SHA256 (canonical/package/mirror): `790EB884105661DDBCB41975DA7A28D359AD4C40C01CDACA7A8613B51F4E6E6C`.
 - Artifact `.ex5` timestamp `2026-09-16 02:10:12`; mirror updated by sync.
 
-### Still pending (user-only)
+### Still pending (requires live MT5)
 
 - Visual re-confirmation: reload the indicator and screenshot the hover panel. If mode 3 still mis-renders, set `InpExplainRenderMode=1` or `2` and re-screenshot; report which mode is correct so the default can be pinned.
 
@@ -383,9 +383,9 @@ The hover panel now renders multi-line, but MIXED lines (Persian + digits/Englis
 
 ### Requirement
 
-Rule 15 of the project's technical notes: no document, README or Explain string may name a capability as present or as a checked gate when the code does not implement it. The full audit (`07_DOCUMENTATION/AUDIT_ICT_SMC_MMM.md`) found six such claims. This batch fixes only scope and wording. No calculation logic was touched.
+Documentation rule 15: no document, README or Explain string may name a capability as present or as a checked gate when the code does not implement it. The full audit (`07_DOCUMENTATION/AUDIT_ICT_SMC_MMM.md`) found six such claims. This batch fixes only scope and wording. No calculation logic was touched.
 
-### Scope lock (decided by the user in this session)
+### Scope lock (decided in this session)
 
 In scope: ICT + SMC + MMM. Out of scope and now recorded as deliberately excluded: Wyckoff, classic Supply & Demand, Auction Market Theory / Market Profile, Volume Profile, Order Flow / Footprint / Delta, RTM, Al Brooks Price Action.
 
@@ -404,7 +404,7 @@ A single recursive search over the whole repository for `wyckoff|volume profile|
 
 ### Why the version number is 1.00 and not 0.10
 
-MQL5 requires `xxx.yyy` and rejects a zero major. Both `"0.10"` and `"0.100"` were rejected with `compiler warning 68`; `"1.00"` compiled clean. The package slug stays `ICT_Assistant_Canonical_v0_1`; the relationship is documented in the source header and in the project's technical notes, section 10-4.
+MQL5 requires `xxx.yyy` and rejects a zero major. Both `"0.10"` and `"0.100"` were rejected with `compiler warning 68`; `"1.00"` compiled clean. The package slug stays `ICT_Assistant_Canonical_v0_1`; the relationship is documented in the source header and in the technical documentation.
 
 ### Build evidence (independently verified)
 
@@ -419,20 +419,20 @@ One audit claim was wrong and has been withdrawn: it said `ExplainLiquidity` des
 
 ### Still open
 
-- Phases 12 to 15 are not started; phases 7, 8, 9, 10 and 11 are done (see the project's technical notes, sections 4-0-4 to 4-0-10). Phase 12 (completing SMC/MMM coverage: FVG Implied/Micro, Mitigation Block, Trendline and Range liquidity, OB Extreme, Core/Standalone split, IPDA reference levels, POI registry, confluence scoring, Entry Model selection, Internal/External split and trend age) is the highest-value next step. The phase 8 numbers still needing a reload are listed in section 4-0-7, and the phase 10/11 runtime values in 4-0-9/4-0-10 of the project's technical notes.
+- Phases 12 to 15 are not started; phases 7, 8, 9, 10 and 11 are done (see the technical documentation (phases 7-11)). Phase 12 (completing SMC/MMM coverage: FVG Implied/Micro, Mitigation Block, Trendline and Range liquidity, OB Extreme, Core/Standalone split, IPDA reference levels, POI registry, confluence scoring, Entry Model selection, Internal/External split and trend age) is the highest-value next step. The phase 8 numbers still needing a reload are listed in phase 8 notes, and the phase 10/11 runtime values in the technical documentation.
 
 ## Phase 11 execution (2026-09-16) - confirmed reversal gate and Smart Money Reversal
 
 The reversal gate now exists as code instead of a dead enum state. `SwingById()` turns the previously write-only `g_htfProtectedHighId`/`g_htfProtectedLowId` into a real price, and `UpdateReversalEngine()` decides with the closed higher-timeframe close whether the protected external level was passed. One ordering detail was the whole risk: `EvaluateStructureBreak` can flip the owner bias and replace the protected swing inside the same bar, so the gate is measured against a snapshot taken **before** that evaluation. The break is published as the new `EVT_EXTERNAL_BREAK` event (appended at the end of `ENUM_EVENT_TYPE` so existing numeric values and stable event ids do not move). `EXH_REVERSAL_CONFIRMED` now has exactly one producer, inside a branch gated by `reversalFresh`.
 
-Smart Money Reversal (#70) is implemented as four counted pieces of evidence (opposing liquidity sweep inside a configurable higher-timeframe window, chained displacement in the reversal direction, an aligned causal FVG or valid order block, and lower-timeframe/internal context agreement) with a user-set threshold. Web search returned nothing in this session, so this is recorded as the project's own explicit operational definition, not as a quotation of a third party's private rule.
+Smart Money Reversal (#70) is implemented as four counted pieces of evidence (opposing liquidity sweep inside a configurable higher-timeframe window, chained displacement in the reversal direction, an aligned causal FVG or valid order block, and lower-timeframe/internal context agreement) with a configurable threshold. Web search returned nothing in this session, so this is recorded as the project's own explicit operational definition, not as a quotation of a third party's private rule.
 
 - #8/#71: the protected high/low price is now consumed; both ids are read, not just written.
 - #10: proven structurally - the whole file contains exactly one assignment to `g_htfBias` (its declaration), and the `UpdateExhaustion` body contains none. The verifier checks both as independent assertions.
 - Verified offline: `tools/Validate-ReversalGate.ps1` -> `PASS=24 FAIL=0`, covering 8 correct gate rows, 9 threshold rows, a deliberately wrong fixture in which all 4 rows must be rejected, and 6 source-level invariants.
 - Build: `0 errors, 0 warnings`, identical SHA256 across all three `.mq5` copies, `.ex5` newer than the source.
 - Not yet shown at runtime: `ICT_Assistant_Canonical_Reversal_Diag.csv`, the dashboard `Reversal:` row, the `ICTv13_REVERSAL_GATE`/`_CONFIRMED` chart objects, and a real confirmed reversal on the symbol. All four need one chart reload.
-- The user confirmed on 2026-09-16 that Persian rendering on the chart is correct. Rendering is therefore closed; only the correctness of the educational content is open. Rule 13 of the project's technical notes forbids touching the renderer without a new screenshot proving breakage.
+- Persian rendering on the chart was confirmed correct on 2026-09-16. Rendering is therefore closed; only the correctness of the educational content is open. Documentation rule 13 forbids touching the renderer without a new screenshot proving breakage.
 - The dashboard still clips long rows and its background box is a fixed 380x560 (raised in phase 9 to fit two new rows; phase 14 still owns row-level clipping).
 
 ## Phase 9 execution (2026-09-16) - time base, dead inputs, broker offset
@@ -515,7 +515,7 @@ Scope: detection and scoring layer only. Persian rendering, HTF bias ownership, 
 
 ## Phase 13 — Stability & performance (completed 2026-09-16)
 
-Full write-up: مستندات فنی پروژه section «۴‑۰‑۱۲».
+Full write-up: the technical documentation.
 
 ### What changed
 
@@ -573,7 +573,7 @@ Status: IMPLEMENTED + BUILD VERIFIED + TOOL VERIFIED + SOURCE-PROVEN (not chart-
 | Frozen policy | none | Objects pushed out of the display window keep a `FROZEN` style (`InpFrozenColor` + `STYLE_DOT`, tooltip explains why and records the original line style). The registry is bounded at `InpMaxFrozenObjects=300` with FIFO eviction |
 | Return from frozen | n/a | If an object re-enters the window it leaves the frozen registry and the draw call restores its real colour/style (`g_frozenRestored`) |
 | Disabled layers | blanket wipe made this free | `LayerDisabledForName()` deletes instead of freezing, so switching a layer off leaves no grey ghosts. `IsStaleSessionBoxName()` deletes session boxes whose day-back index is now beyond `InpKillzoneDaysBack` |
-| Explicit filters | `continue` only | `MarkHiddenLayerObj()` -> deleted by the reconciler. "The user does not want this" stays distinct from "the display cap filled up" |
+| Explicit filters | `continue` only | `MarkHiddenLayerObj()` -> deleted by the reconciler. "Deliberately hidden" stays distinct from "the display cap filled up" |
 | Dashboard clipping | hard-coded 380x640 | `DashMeasure()` uses `TextSetFont("Consolas",-size*10,FW_NORMAL)` + `TextGetSize()`; `DashEnd()` sizes the box from the measured widest row and the used row count |
 | Long rows | drawn on one line, clipped | Break at the last fitting separator when `InpDashMaxWidth>40`; if it still does not fit the text is **never truncated** - the panel widens and `g_dashOverflow` counts it |
 | Stale rows | no removal path | `DashBegin`/`DashRow`/`DashEnd`; any `ICTv13_DASH_*` label not written in this pass is deleted (`g_dashStale`) |
@@ -646,15 +646,15 @@ What phase 15 closed:
    needs a new chain id. Evidence: `ICT_Assistant_Canonical_Phase15_Diag.csv` (Common\Files).
 3. **HTF structure events are drawn on the chart** (the open item of phase 14) with an independent cap
    `InpMaxDrawnHTFEvents=8`.
-4. **Copyright metadata (explicit user request):** `#property copyright` = "Khaleq Salehi —
+4. **Copyright metadata:** `#property copyright` = "Khaleq Salehi —
    khaleq.sa@gmail.com — +989120143697", `#property link`, Persian description. Metadata only; a follow-up
    build after this change was again `0 errors, 0 warnings` (source SHA256 `6CE73562…ACA3479`, .ex5 @
    2026-09-18 00:22:25).
 
-All 15 phases are now implemented; the remaining gate for phases 10–15 is one chart reload by the user so the
+All 15 phases are now implemented; the remaining gate for phases 10–15 is one chart reload so the
 runtime evidence (Phase15_Diag.csv, Journal lines, HTF events) can be recorded.
 
-## Display hygiene patch — invalidated past hidden + hover only with Ctrl  ✅ (2026-09-18, explicit user request)
+## Display hygiene patch — invalidated past hidden + hover only with Ctrl  ✅ (2026-09-18)
 
 ```text
 Build:  0 errors, 0 warnings — source SHA256 B9DA6D8E…5DF0B7 identical in 3 copies · .ex5 @ 2026-09-18 01:16:43
@@ -676,15 +676,15 @@ Tools:  Phase14 137/0 (hidden-count check loosened to >=5 to cover the new call 
    mouse is completely free for scrolling/dragging. First build attempt failed with
    `TERMINAL_KEYSTATE_LEFT_CTRL` (undeclared — no such MQL5 constant); corrected to the documented bitmask.
 
-## Phases 16-21 — remaining six families added  ✅ (2026-09-18, explicit user approval)
+## Phases 16-21 — remaining six families added  ✅ (2026-09-18)
 
 ```text
 Build:  0 errors, 0 warnings — source SHA256 26309436…DF31C7E identical in 3 copies · .ex5 @ 2026-09-18 01:43:32
 Tools:  Phase14 137/0 (DashRow cap widened to >=45 for the new rows) · Phase15 36/0 — no regressions
 ```
 
-The user supplied the full 10-family list and explicitly approved adding the six missing families via the
-interactive question. The domain lock in the project's technical notes 1-1 was reopened accordingly.
+The full 10-family list was supplied and adding the six missing families was approved via the
+interactive question. The project domain table was reopened accordingly.
 
 | Phase | Family | What is computed | Chart + Persian hover |
 |---|---|---|---|
@@ -711,13 +711,13 @@ Build: 0 errors, 0 warnings — source SHA256 F6D1BEF2B2234334B3E5B5D4C2FBA47D33
 identical in repo and MT5 folder · .ex5 381278 bytes · 2026-09-18 03:09:15.
 Pending: runtime numbers need one chart reload (Remove -> Refresh -> Add).
 
-## 2026-09-18 05:10 — بازبینی نهایی نمایش (بند ۴‑۰‑۱۹ مستندات فنی پروژه)
+## 2026-09-18 05:10 — بازبینی نهایی نمایش (بند ۴‑۰‑۱۹ مستندات فنی)
 - سوییچ‌های نمایش جدید: `InpDrawIPDA=true` · `InpDrawTrendlines=true` · `InpDrawBestPOI=true` (کشف دست نخورد؛ فقط رسم)
 - هر-تایم‌فریم: `SDObj.tf` اضافه شد و در `DrawFamiliesLayer` با `InpDrawPerTimeframe` فیلتر می‌شود؛ EQ/OTE/Golden تابع `InpDrawSetupBox`
 - build: 0 errors, 0 warnings — سورس SHA256 `814AFA65…6AD` یکسان (مخزن + MT5) · .ex5 2026-09-18 05:10:12
 - رگرسیون: Validate-Phase14 137/0 · Validate-Phase15 36/0
 
-## 2026-09-18 11:12 — داشبورد COMPACT پیش‌فرض + خطوط غیرفعال حالت ساکن (بند ۴‑۰‑۲۰ مستندات فنی پروژه)
+## 2026-09-18 11:12 — داشبورد COMPACT پیش‌فرض + خطوط غیرفعال حالت ساکن (بند ۴‑۰‑۲۰ مستندات فنی)
 
 - `InpDashCompact=true` (پیش‌فرض): `DashCompactSkip` در `DashRow` فقط ردیف‌های تصمیم ترید را رسم می‌کند (title/htf/mtfdirs/sess/mtfsetup/dol/location/reversal/exhaustion/setup/life/dirline/entry/sl/tp1..tp3/rr + sep* + mtfreason هنگام تضاد + clocknote هنگام هشدار). شمارنده‌های تشخیصی فقط با `InpDashCompact=false` — دادهٔ کامل در CSVها باقی است.
 - ردیف `hygiene` در COMPACT نه رسم می‌شود نه محاسبه (حذف پیمایش `ObjectsTotal` در هر کندل).
@@ -725,7 +725,7 @@ Pending: runtime numbers need one chart reload (Remove -> Refresh -> Add).
 - `DrawReversalLevels`: خط REVERSAL فقط وقتی دروازه armed یا confirmed است رسم می‌شود؛ حالت ساکن بدون خط.
 - build: 0 errors, 0 warnings؛ SHA256 سورس 3D9FFA2178CEE6EF… یکسان در مخزن/پکیج/پوشهٔ MT5؛ .ex5 در 2026-09-18 11:12:59؛ رگرسیون Phase14 137/0، Phase15 36/0.
 
-## Phase 22 — دو ایراد کاربر: «hover توضیح نمی‌دهد» + «بعضی محاسبات غلط است» (2026-09-18 12:21)
+## Phase 22 — دو ایراد گزارش‌شده: «hover توضیح نمی‌دهد» + «بعضی محاسبات غلط است» (2026-09-18 12:21)
 
 ### الف) ریشهٔ واقعی «هیچی نمی‌نویسد» (دو علت مستقل)
 - **علت الف:** `RedrawChartObjects()` بی هیچ شرطی `g_expHovered=""; ExpClear(); RenderExplainPanel();` را اجرا می‌کرد و `RenderExplainPanel` با `total==0` همهٔ ردیف‌های `ICTv13_EXP_*` را حذف می‌کرد. این تابع یک‌بار در هر **کندل بسته** و یک‌بار در پایان rebuild اجرا می‌شود (دو call site، تأییدشده با grep روی `OnCalculate`)؛ یعنی روی M1 هر دقیقه و بعد از هر rebuild پنل نابود می‌شد.
@@ -761,7 +761,7 @@ Validate-CanonicalEventLedger: فایل قدیمی آلوده FAILED (۷ ردی�
 | ۱ | فارسی برعکس/بی‌ریخت دیده می‌شد | مرجع بیرونی: تاپیک ۵۰۴۵۲۲ انجمن MQL5 — از buildهای اخیر، رندرگر آبجکت‌های چارت **bidi ندارد** و RTL را LTR می‌کشد. حالت پیش‌فرض `InpExplainRenderMode=3` بود که به RLE..PDF تکیه می‌کرد؛ روی این buildها بی‌اثر است | پیش‌فرض حالت **۲**: شکل‌دهی حروف روی متن منطقی + تبدیل به ترتیب بصری |
 | ۲ | ترتیب کلمه‌ها و علائم نگارشی جابه‌جا بود | نسخهٔ قبلی ترتیب بصری را **کلمه‌به‌کلمه** می‌ساخت و براکت‌ها را آینه نمی‌کرد | بازنویسی با قاعدهٔ **N1/N2 از UBA** + چیدن runها از آخر به اول + آینه‌کردن براکت (`FaMirror`) |
 | ۳ | tooltip روی آبجکت برعکس بود | tooltip را خود ترمینال می‌کشد (bidi دارد)؛ تبدیل دستی رشته را **دو بار** برمی‌گرداند | `OBJPROP_TOOLTIP` متن منطقی خام می‌گیرد (همان قرارداد tooltip آبجکت‌های FROZEN) |
-| ۴ | داشبورد چارت را می‌گرفت | درخواست صریح کاربر: کادر گزارش حذف شود | `InpShowDashboard=false` پیش‌فرض (یک ورودی، قابل برگشت) |
+| ۴ | داشبورد چارت را می‌گرفت | کادر گزارش حذف شود | `InpShowDashboard=false` پیش‌فرض (یک ورودی، قابل برگشت) |
 
 **ابزار جدید:** `tools/Validate-PersianRender.ps1` — یعنی `PASS=21 FAIL=0`
 - بخش A: بازپیاده‌سازی مستقل قاعدهٔ ترتیب بصری + ۸ fixture با مقدار چشم‌انتظار دستی (`persian_visual.fixture.csv`)
@@ -825,7 +825,7 @@ Validate: PersianRender 24/0 (سه بررسی جدید) · Phase12 77/0 · Phase
           Phase15 36/0 · PerfPhase24 19/0
 ```
 
-**باز مانده (نیازمند چشم کاربر):** «پنل فقط روی ناحیه/خط باز می‌شود» و «فارسی پنل درست است» با یک reload تأیید می‌شود. اگر لازم شد: `InpExplainOnlyWithCtrl=true` (پنل فقط با Ctrl) — بدون rebuild.
+**باز مانده (نیازمند بازبینی چشمی):** «پنل فقط روی ناحیه/خط باز می‌شود» و «فارسی پنل درست است» با یک reload تأیید می‌شود. اگر لازم شد: `InpExplainOnlyWithCtrl=true` (پنل فقط با Ctrl) — بدون rebuild.
 
 ---
 
@@ -836,7 +836,7 @@ Validate: PersianRender 24/0 (سه بررسی جدید) · Phase12 77/0 · Phase
 | ۱ | `input bool InpExplainOnlyWithCtrl = false` (پنل با هر ایستادن موس روی خط باز می‌شد) | `input ENUM_EXPLAIN_GATE InpExplainGate = EXPLAIN_GATE_CTRL` — تا کلید پایین نباشد پنلی باز نمی‌شود |
 | ۲ | فقط Ctrl | `CTRL` (پیش‌فرض) · `SHIFT` · `CTRL_SHIFT` · `FREE` |
 | ۳ | منطق بیت‌ماسک داخل بدنهٔ `OnChartEvent` | `ExplainGateOpen(sparam)` + `ExplainGateKeyName()` |
-| ۴ | کاربر نمی‌دانست کدام کلید | یک خط راهنما در **Journal** هنگام attach (روی چارت چیزی اضافه نشد) |
+| ۴ | نام کلید واضح نبود | یک خط راهنما در **Journal** هنگام attach (روی چارت چیزی اضافه نشد) |
 
 نگاشت مقادیر عمداً با ورودی قدیمی سازگار است: `false → 0 = FREE` و `true → 1 = CTRL`.
 
@@ -851,7 +851,7 @@ Validate: Phase14 153/0 (سه بررسی جدید فاز ۲۶) · Phase12 77/0 �
           PerfPhase24 19/0 · PersianRender 24/0
 ```
 
-**باز مانده (نیازمند چشم کاربر):** «پنل فقط با کلید باز می‌شود» و «فارسی سالم است» با یک reload تأیید می‌شود.
+**باز مانده (نیازمند بازبینی چشمی):** «پنل فقط با کلید باز می‌شود» و «فارسی سالم است» با یک reload تأیید می‌شود.
 
 ---
 
@@ -861,7 +861,7 @@ Validate: Phase14 153/0 (سه بررسی جدید فاز ۲۶) · Phase12 77/0 �
 
 | # | قبل | بعد |
 |---|---|---|
-| ۱ | `InpExplainRenderMode = 2` (شکل‌دهی + ترتیب بصری روی کنترل بومی) | `= 0` متن خام منطقی — همان چیزی که کاربر قبلاً تأیید کرده بود |
+| ۱ | `InpExplainRenderMode = 2` (شکل‌دهی + ترتیب بصری روی کنترل بومی) | `= 0` متن خام منطقی — همان چیزی که قبلاً تأیید شده بود |
 | ۲ | پنل با hover یا نگه‌داشتن Ctrl باز می‌شد | `InpExplainOpen = EXPLAIN_OPEN_CLICK` پیش‌فرض؛ کلیک روی آبجکت = پنل کامل، کلیک روی فضای خالی/کلیک دوباره/`ESC` = بستن |
 | ۳ | `CHART_EVENT_MOUSE_MOVE` همیشه فعال | فقط در حالت اختیاری HOVER فعال می‌شود → در پیش‌فرض **هیچ** رویداد حرکتی موس دریافت نمی‌شود |
 | ۴ | منطق باز/بسته داخل `OnChartEvent` تکرار شده بود | `ExplainOpenAt()` + `ExplainClosePanel()` مشترک بین دو حالت |
@@ -900,7 +900,7 @@ Validate-Phase28 (ابزار جدید): PASS=19 FAIL=0
 
 ## فاز ۲۹ — BOS/CHoCH و OB (2026-09-19 09:28)
 
-پرسش کاربر پس از فاز ۲۸: «FVG ها درست حساب می‌شن؛ BOS ها چی؟ OB چی؟» چهار ایراد زیر با سند در کد + منبع انگلیسی بسته شد:
+پرسش پس از فاز ۲۸: «FVG ها درست حساب می‌شن؛ BOS ها چی؟ OB چی؟» چهار ایراد زیر با سند در کد + منبع انگلیسی بسته شد:
 
 | # | ایراد | سند | اصلاح |
 |---|---|---|---|
@@ -965,7 +965,7 @@ Validate-Phase30 (ابزار جدید): PASS=43 FAIL=0
 
 ## فاز ۳۲ — موتور «ریسک برگشت» (2026-09-19 09:47)
 
-برای این سؤال کاربر: «طلا تا کجا رفت، چند درصد احتمال برگشت دارد، اون نقطه OB است یا لیکویدی — که برعکس وارد ترید نشوم.»
+برای این پرسش: «طلا تا کجا رفت، چند درصد احتمال برگشت دارد، اون نقطه OB است یا لیکویدی — که برعکس وارد ترید نشوم.»
 
 - در هر کندل بسته: نزدیک‌ترین سطح از **همهٔ** رجیستری‌ها + وضعیتش + فاصله (ATR) · پیشرفت لگ (٪) · فاصله تا DOL · پرچم SFP · Exhaustion · هم‌جهتی MTF.
 - امتیاز هشدار ۰..۱۰۰ با وزن‌های مستند (۲۵/۲۰/۱۵×۳/۱۰×۲/−۱۰) — **«درصد» نیست** و در کد هم هیچ درصدی تولید نمی‌شود.
@@ -989,7 +989,7 @@ Validate-Phase32 (جدید): PASS=26 FAIL=0 · ابزار جدید: Report-Rever
 
 ## فاز ۳۳–۳۴ — ممیزی دونه‌به‌دونهٔ Wyckoff · S&D · Brooks · Profile/AMT · RTM با منابع (2026-09-19 10:02)
 
-**۱۹ ایراد اثبات‌شده** با شاهد کد + منبع انگلیسی بازبینی و بسته شد (جدول کامل در مستندات فنی پروژه، بخش ۴‑۰‑۳۲):
+**۱۹ ایراد اثبات‌شده** با شاهد کد + منبع انگلیسی بازبینی و بسته شد (جدول کامل در مستندات فنی پروژه):
 
 | خانواده | ایرادهای بسته‌شده |
 |---|---|
@@ -1012,7 +1012,7 @@ Validate-Phase34 (جدید): PASS=63 FAIL=0
 
 **رفتار قابل تغییر که باید بدانی:** رویدادهای Wyckoff حالا **کمتر ولی معنادار** دیده می‌شوند (Spring فقط داخل رنج تأییدشده)، برچسب H/L شمارش تلاش‌ها را نشان می‌دهد (نه پولبک)، و RTM/AMT برچسب پیش‌فرض روی چارت ندارند (فقط در داشبورد و پنل کلیکی) تا چارت تمیز بماند.
 
-**هنوز نیست (صادقانه):** Measured Moves · Trading Ranges دو طرفه · Nested/MTF Mitigation · برچسب Price Delivery · Quarterly Theory · Profile Shapes · Heatmap/Iceberg (روی tick-volume اصلاً ممکن نیست) · Channel Lines. این‌ها در «فاز ۳۶ به بعد» قابل شروع‌اند (فاز ۳۵ به نوار ریسک اختصاص یافت — بند ۴‑۰‑۳۳ در مستندات فنی پروژه).
+**هنوز نیست (صادقانه):** Measured Moves · Trading Ranges دو طرفه · Nested/MTF Mitigation · برچسب Price Delivery · Quarterly Theory · Profile Shapes · Heatmap/Iceberg (روی tick-volume اصلاً ممکن نیست) · Channel Lines. این‌ها در «فاز ۳۶ به بعد» قابل شروع‌اند (فاز ۳۵ به نوار ریسک اختصاص یافت — بند ۴‑۰‑۳۳ در مستندات فنی).
 
 ## Phase 35 — Single-line risk strip (2026-09-19 15:04)
 
@@ -1044,4 +1044,4 @@ Validate-Phase36 (جدید): PASS=51 FAIL=0
    Phase30 43/0 · Phase32 26/0 · Phase34 63/0 · Phase35 23/0 · PerfPhase24 19/0 · PersianRender 25/0
 ```
 
-جزئیات و لنگرهای کد: مستندات فنی پروژه، بند ۴‑۰‑۳۷. فهرست قبلی «فاز ۳۶ به بعد» بسته شد؛ هیچ قلم ❌ از فهرست رسمی باقی نمانده است.
+جزئیات و لنگرهای کد: مستندات فنی پروژه بند ۴‑۰‑۳۷. فهرست قبلی «فاز ۳۶ به بعد» بسته شد؛ هیچ قلم ❌ از فهرست رسمی باقی نمانده است.

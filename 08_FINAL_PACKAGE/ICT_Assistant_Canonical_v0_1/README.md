@@ -71,7 +71,7 @@ This package is NOT feature-complete. The following are known, recorded and numb
 - Six session-hour inputs and `InpMTF` and `InpDrawSilverBullet` have no effect on the logic.
 - The broker GMT offset is detected once at init and is not refreshed when the broker changes offset for DST.
 
-Repair roadmap: the project's technical notes, section 11 (phases 7-15).
+Repair roadmap: documented phase-by-phase in the repository documentation (phases 7-15).
 
 ## Installation
 

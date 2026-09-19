@@ -97,7 +97,7 @@ function SimFreeze($rows) {
    return $out
 }
 
-"=== A1) RULE CHECK: frozen-history FIFO cap (#14 / AGENTS 4-0-12 test 1)"
+"=== A1) RULE CHECK: frozen-history FIFO cap (#14 / documentation 4-0-12 test 1)"
 $fzRows = ReadRows (Join-Path $Fixtures "phase14_freeze_fifo.fixture.csv")
 $fzSim  = SimFreeze $fzRows
 for ($i = 0; $i -lt $fzRows.Count; $i++) {

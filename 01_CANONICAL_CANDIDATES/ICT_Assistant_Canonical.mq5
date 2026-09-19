@@ -186,7 +186,7 @@ input double InpRR_TP2                = 2.0;
 input double InpRR_TP3                = 3.0;
 
 input group "== Dashboard =="
-// درخواست کاربر (2026-09-18): داشبورد پیش‌فرض خاموش است تا چارت خالی و تمیز بماند.
+// داشبورد پیش‌فرض خاموش است تا چارت خالی و تمیز بماند.
 // آموزش روی خود آبجکت‌ها (tooltip + پنل توضیح با بردن موس) کار می‌کند و نیازی به کادر
 // گزارش ندارد. برای برگرداندن داشبورد همین یک ورودی را true کن.
 input bool   InpShowDashboard         = false;
@@ -198,7 +198,7 @@ input color  InpColorBull             = clrLime;
 input color  InpColorBear             = clrOrangeRed;
 input color  InpColorNeutral          = clrSilver;
 
-// درخواست کاربر (2026-09-18): داشبورد راهنما باشد نه گزارش کامل — حالت COMPACT
+// داشبورد راهنما باشد نه گزارش کامل — حالت COMPACT
 // فقط ردیف‌های تصمیم ترید را نشان می‌دهد (Bias، جهت داخلی، سشن، چرخه، DOL،
 // مکان، ستاپ/انتظار، هشدارها) و همهٔ شمارنده‌های تشخیصی به حالت FULL می‌روند.
 input bool   InpDashCompact           = true;  // داشبورد کم‌حجم: فقط ردیف‌های تصمیم (false = گزارش کامل قبلی)
@@ -289,7 +289,7 @@ input bool   InpLogPhase14OnRedraw      = true;        // نوشتن شمارن�
 // --- فاز ۱۵: آفست تاریخی بروکر (DST تاریخی) و چرخهٔ عمر ستاپ ---
 // قاعدهٔ DST بروکر: بروکر آفستش را با DST عوض می‌کند، ولی MT5 فقط آفست *جاری*
 // را می‌دهد. برای تحلیل تاریخچه باید قاعدهٔ DST بروکر معلوم باشد تا آفست هر
-// لحظهٔ گذشته بازسازی شود (AGENTS «۴‑۰‑۸»: تحلیل تاریخی همیشه با آفست امروز).
+// لحظهٔ گذشته بازسازی شود (قاعدهٔ ثبت‌شدهٔ پروژه: تحلیل تاریخی همیشه با آفست امروز).
 enum ENUM_BROKER_DST_RULE
 {
    BDST_AUTO,   // تخمین از خانوادهٔ آفست جاری بروکر (+0..+3 → اروپا، −4/−5 → آمریکا، بقیه بدون DST)
@@ -305,7 +305,7 @@ input bool   InpDrawHTFEvents             = true;  // رسم رویداد ساخ
 input int    InpMaxDrawnHTFEvents         = 4;     // سقف رسم رویداد HTF (قبلاً ۸)
 input bool   InpWritePhase15Diagnostics   = true;  // نوشتن ICT_Assistant_Canonical_Phase15_Diag.csv
 
-// --- فاز ۲۶ (درخواست کاربر 2026-09-18): توضیح آموزشی «کلیدمحور» ---
+// --- فاز ۲۶: توضیح آموزشی «کلیدمحور» ---
 // چارت پیش‌فرض باید کاملاً تمیز باشد: تا وقتی کاربر خودش کلید انتخابی را پایین
 // نگه نداشته، هیچ پنل آموزشی باز نمی‌شود و موس برای اسکرول/درگ آزاد است.
 // مرجع رسمی: مستندات MQL5، CHARTEVENT_MOUSE_MOVE — مقدار sparam رشتهٔ
@@ -320,7 +320,7 @@ enum ENUM_EXPLAIN_OPEN
    EXPLAIN_OPEN_HOVER = 1    // سبک قدیمی: با ایستادن موس روی آبجکت
 };
 
-// --- درخواست کاربر (2026-09-18): حذف گذشتهٔ فیلدشده + کنترل انسداد چارت ---
+// --- حذف گذشتهٔ فیلدشده + کنترل انسداد چارت ---
 // ۱) مواردی که باطل/فیلد/جارو شده‌اند دیگر رسم نمی‌شوند (تاریخچه فقط در CSV می‌ماند).
 // ۲) پنل آموزشی کلیدمحور است (InpExplainGate) تا چارت پیش‌فرض تمیز بماند.
 // ورودی‌ها در انتهای لیست اضافه شدند تا اندیس ورودی‌های قبلی عوض نشود.
@@ -332,7 +332,7 @@ input int    InpSweptKeepBars             = 3;     // برای SWEPT فقط هم
 input bool   InpDrawPerTimeframe          = true;  // هر تایم‌فریم مالک، رسم مخصوص خودش (مستقل از تایم‌فریم چارت)
 input ENUM_EXPLAIN_OPEN InpExplainOpen    = EXPLAIN_OPEN_CLICK; // فاز ۲۷: پنل آموزشی با کلیک باز می‌شود (پیش‌فرض). HOVER = سبک قدیمی، فقط اگر خواستی
 
-// --- فازهای ۱۶–۲۱ (2026-09-18، اجازهٔ صریح کاربر): شش خانوادهٔ باقی‌مانده ---
+// --- فازهای ۱۶–۲۱ (2026-09-18): شش خانوادهٔ باقی‌مانده ---
 input group "== Phase 16-21: Wyckoff / SupplyDemand / AlBrooks / RTM / Profile =="
 input bool   InpEnableWyckoff            = true;  // فاز ۱۶: SC/BC، AR/ST، Spring/Upthrust، SOS/SOW، LPS/LPSY، فازهای A–E
 input int    InpWyckoffLookbackBars      = 60;    // چند کندل بستهٔ چارت برای تحلیل فاز Wyckoff
@@ -402,7 +402,7 @@ input bool   InpDrawSDZones       = true;  // نواحی Supply/Demand (RBR/DBD/
 input bool   InpDrawIPDA          = true;  // سطوح IPDA (Old High/Low ۲۰/۴۰/۶۰ روزه) = نقشهٔ هدف نقدینگی بلندمدت → ضروری
 input bool   InpDrawTrendlines    = true;  // نقدینگی مورب (Trendline) = ناحیهٔ فعال هدف‌گیری قیمت → ضروری
 input bool   InpDrawBestPOI       = true;  // بهترین نقطهٔ ورود (POI) از رجیستری یکپارچه → ضروری
-input bool   InpDrawDOL           = true;  // خط DOL (هدف معامله). خاموش = فقط در داشبورد — درخواست کاربر برای چارت خلوت‌تر
+input bool   InpDrawDOL           = true;  // خط DOL (هدف معامله). خاموش = فقط در داشبورد — برای چارت خلوت‌تر
 
 // --- فاز ۲۸: تکمیل و تصحیح منطق FVG (منابع انگلیسی، بدون حدس) ---
 // منبع ۱ (LuxAlgo Library — Fair Value Gap، مرحلهٔ ۴ تشخیص): «گپ‌های سه‌کندلی
@@ -715,7 +715,7 @@ struct ReversalState
    double         confirmedClose;
    int            barsSince;
    long           eventId;
-   // --- #۷۰ Smart Money Reversal (تعریف عملیاتی همین پروژه؛ در مستندات فنی پروژه ثبت شده) ---
+   // --- #۷۰ Smart Money Reversal (تعریف عملیاتی همین پروژه؛ در مستندات ثبت شده) ---
    int            smrScore;
    int            smrMax;
    bool           smr;
@@ -1305,7 +1305,7 @@ bool NY_IsDST_UTC(datetime utcT)
 }
 
 //====================================================================
-// فازهای ۱۶–۲۱ (اجازهٔ صریح کاربر 2026-09-18): شش خانوادهٔ باقی‌مانده
+// فازهای ۱۶–۲۱ (2026-09-18): شش خانوادهٔ باقی‌مانده
 //   ۱۶ Wyckoff · ۱۷ Supply&Demand · ۱۸ Al Brooks · ۱۹ RTM · ۲۰–۲۱ Profile
 // همهٔ محاسبات روی کندل بسته است (قانون ۸) و خروجی با hover فارسی
 // و رعایت بهداشت نمایش (حذف فیلدشده‌ها) رندر می‌شود.
@@ -3020,7 +3020,7 @@ bool FindLastClosedWindow(int startH, int startM, int endH, int endM, datetime r
 // INIT
 //====================================================================
 //====================================================================
-// فاز ۲۷ — توضیح آموزشی «کلیکی» (درخواست صریح کاربر)
+// فاز ۲۷ — توضیح آموزشی «کلیکی»
 //
 // کاربر گفت: موس باید آزاد باشد و توضیح نباید خودش بیاید؛ هر خطی که کلیک
 // شد توضیحش بیاید. پس مسیر پیش‌فرض حالا CHARTEVENT_CLICK است و هیچ رویداد
@@ -6389,7 +6389,7 @@ void RegisterExternalBreakEvent(ENUM_DIRECTION dir, datetime barTime, double lev
 
 // #۷۰ — Smart Money Reversal روی شواهد اثبات‌شدهٔ همین پروژه ساخته می‌شود، نه
 // روی یک الگوی کندلی حدسی. چهار شاهد شمارش می‌شوند و آستانه از ورودی می‌آید.
-// تعریف عملیاتی دقیقاً همین است و در مستندات فنی پروژه ثبت می‌شود: این سنجه «قوی‌تر»
+// تعریف عملیاتی دقیقاً همین است و در مستندات ثبت می‌شود: این سنجه «قوی‌تر»
 // از برگشت ساده است، نه یک قاعدهٔ خصوصی منسوب به شخص سوم.
 void ScoreSmartMoneyReversal(ENUM_DIRECTION dir, datetime barOpen, datetime barCloseTime)
 {
@@ -6869,7 +6869,7 @@ void DrawOB(const OBObj &o)
 
 void DrawRejection(const RejectionObj &r)
 {
-   // درخواست کاربر: Rejection باطل‌شده رسم نمی‌شود (فیلتر در DrawZoneLayer هم اعمال شده؛
+   // Rejection باطل‌شده رسم نمی‌شود (فیلتر در DrawZoneLayer هم اعمال شده؛
    // این شرط دفاعی دوم است تا با هر مسیر رسمی چیزی از گذشته فیلدشده نماند).
    if(InpHideInvalidatedObjects && r.rejectionState==REJECTION_INVALID) return;
    color clr = r.direction==DIR_BULL?clrAqua:clrOrange;
@@ -6957,7 +6957,7 @@ void DrawLocationLevels()
 // خط DOL: هدف واقعی معامله؛ روی hover توضیح عددی می‌دهد (مستقل از اعتبار لگ)
 void DrawDOLLine()
 {
-   if(!InpDrawDOL) return;               // درخواست کاربر: هدف روی چارت اختیاری است (در داشبورد هست)
+   if(!InpDrawDOL) return;               // هدف روی چارت اختیاری است (در داشبورد هست)
    if(!g_hasDOL) return;
    string dolName="ICTv13_DOL_LINE";
    if(ObjectFind(0,dolName)<0) ObjectCreate(0,dolName,OBJ_HLINE,0,0,g_currentDOL.price);
@@ -7164,7 +7164,7 @@ void ReconcileChartLayer()
       string nm=ObjectName(0,i,-1,-1);
       if(!IsLayerObjectName(nm)) continue;
 
-      // درخواست کاربر (2026-09-18): منقضی‌شده‌ها و گذشتهٔ پیر، **کاملاً پاک** شوند
+      // منقضی‌شده‌ها و گذشتهٔ پیر، **کاملاً پاک** شوند
       // (نه frozen). ملاک عمر، زمان ساخت داخل نام نیست؛ اینجا با «قدیمی‌بودنِ زمان
       // لنگر آبجکت» پیر شمرده می‌شود تا تاریخچهٔ خیلی عقب زنده نماند.
       if(InpDeleteExpiredObjects && InpExpiryKeepBars>0)
@@ -7260,7 +7260,7 @@ void DrawLiquidityLayer()
    {
       if(g_liquidity[i].state==LSTATE_INVALID) continue;
       bool swept = (g_liquidity[i].state==LSTATE_SWEPT);
-      // درخواست کاربر: گذشتهٔ فیلدشده رسم نشود. سطح SWEPT فقط اگر تازه باشد
+      // گذشتهٔ فیلدشده رسم نشود. سطح SWEPT فقط اگر تازه باشد
       // (برای مرجع الگوی سوئپ) و سطح INVALID هرگز رسم نمی‌شود.
       if(swept)
       {
@@ -7294,7 +7294,7 @@ void DrawLiquidityLayer()
       drawn++;
    }
 
-   // سطوح INVALID به‌درخواست کاربر (2026-09-18) دیگر رسم نمی‌شوند؛ تاریخچه در CSV می‌ماند.
+   // سطوح INVALID دیگر رسم نمی‌شوند؛ تاریخچه در CSV می‌ماند.
    if(!InpHideInvalidatedObjects)
    {
       int invalidCap=InpMaxDrawnLevels/3;
@@ -7321,7 +7321,7 @@ void DrawSweepLayer()
    for(int i=ArraySize(g_liquidity)-1; i>=0 && drawn<InpMaxDrawnLevels; i--)
    {
       if(g_liquidity[i].state!=LSTATE_SWEPT || g_liquidity[i].sweptTime<=0) continue;
-      // درخواست کاربر: نشانِ سوئپ هم گذشته است؛ فقط چند کندل آخر می‌ماند.
+      // نشانِ سوئپ هم گذشته است؛ فقط چند کندل آخر می‌ماند.
       if(InpSweptKeepBars>0)
       {
          int age=(int)((g_lastContextBarTime-g_liquidity[i].sweptTime)/MathMax(1,PeriodSeconds(PERIOD_CURRENT)));
@@ -7363,7 +7363,7 @@ void DrawZoneLayer()
             MarkHiddenLayerObj("ICTv13_FVGCE_"+IdToStr(g_fvgs[i].id));
             continue;
          }
-         // درخواست کاربر: FVG لمس‌شده/معکوس‌شده گذشته رسم نشود.
+         // FVG لمس‌شده/معکوس‌شده گذشته رسم نشود.
          // iFVG پولاریتی عوض کرده و دوباره «سطح معکوس» معتبر است، پس با منطق
          // «گذشته پاک شود» نمی‌خورد؛ فقط mitigated قدیمی حذف می‌شود. برای mitigated
          // فاقد touchTime ثبت‌شده، زمان تولد مبنا گرفته می‌شود (تولد قدیمی = گذشته).
@@ -7377,7 +7377,7 @@ void DrawZoneLayer()
                continue;
             }
          }
-         // درخواست کاربر: هر تایم‌فریم برای خودش رسم کند — ناحیهٔ متعلق به
+         // هر تایم‌فریم برای خودش رسم کند — ناحیهٔ متعلق به
          // تایم‌فریم مالکش رسم می‌شود (نه تایم‌فریم چارت). Micro (M1) همیشه رسم است.
          if(InpDrawPerTimeframe && g_fvgs[i].kind==FVGK_STANDARD && g_fvgs[i].tf!=PERIOD_CURRENT)
          {
@@ -7394,14 +7394,14 @@ void DrawZoneLayer()
       int drawn=0;
       for(int i=ArraySize(g_obs)-1; i>=0 && drawn<InpMaxDrawnZones; i--)
       {
-         // درخواست کاربر: OB شکسته/نامعتبر گذشته رسم نشود؛ MITIGATED تازه می‌ماند.
+         // OB شکسته/نامعتبر گذشته رسم نشود؛ MITIGATED تازه می‌ماند.
          if(InpHideInvalidatedObjects &&
             (g_obs[i].state==OB_BROKEN || g_obs[i].state==OB_INVALID))
          {
             MarkHiddenLayerObj("ICTv13_OB_"+IdToStr(g_obs[i].id));
             continue;
          }
-         // درخواست کاربر: هر تایم‌فریم برای خودش رسم کند.
+         // هر تایم‌فریم برای خودش رسم کند.
          if(InpDrawPerTimeframe && g_obs[i].tf!=PERIOD_CURRENT)
          {
             MarkHiddenLayerObj("ICTv13_OB_"+IdToStr(g_obs[i].id));
@@ -7559,7 +7559,7 @@ void DrawSetupLayer()
 // فاز ۱۱: سطح محافظت‌شدهٔ خارجی (دروازهٔ برگشت) و تأییدیهٔ برگشت
 void DrawReversalLevels()
 {
-   // درخواست کاربر (چارت خلوت‌تر): فقط هشدارهای *فعال* برگشت رسم شوند —
+   // (چارت خلوت‌تر): فقط هشدارهای *فعال* برگشت رسم شوند —
    // دروازهٔ مسلح‌شده یا تأییدشده؛ حالت ساکن خطی روی چارت نمی‌گذارد.
    if(!InpDrawReversalLevel || !InpEnableReversalGate) return;
    if(!g_reversal.armed && !g_reversal.confirmed) return;
@@ -7619,7 +7619,7 @@ void DrawFamiliesLayer()
    // Supply/Demand: ناحیهٔ ورود واقعی است (مانند FVG/OB) → پیش‌فرض روشن؛
    // سقف رسم هم به‌جای عدد ثابت ۱۰ از سقف رجیستری InpSD_MaxZones می‌آید تا
    // «رجیستری» و «نمایش» از هم جدا بمانند. هر تایم‌فریم مالک، رسم مخصوص خودش:
-   // ناحیهٔ متعلق به تایم‌فریم دیگر روی این چارت رسم نمی‌شود (درخواست کاربر).
+   // ناحیهٔ متعلق به تایم‌فریم دیگر روی این چارت رسم نمی‌شود (طراحی پروژه).
    if(InpEnableSupplyDemand && InpDrawSDZones)
    {
       int drawn=0;
@@ -9543,7 +9543,7 @@ void ExplainClosePanel()
 
 void OnChartEvent(const int id, const long &lparam, const double &dparam, const string &sparam)
 {
-   // ---- فاز ۲۷ (درخواست کاربر): مسیر پیش‌فرض «کلیک» است ----
+   // ---- فاز ۲۷ (طراحی پروژه): مسیر پیش‌فرض «کلیک» است ----
    // CHARTEVENT_CLICK: lparam = X و dparam = Y کلیک.
    if(id==CHARTEVENT_CLICK)
    {
@@ -9593,7 +9593,7 @@ void OnChartEvent(const int id, const long &lparam, const double &dparam, const 
 //      (مثلاً ردیف OB با ۶۶ کاراکتر)، متن از کادر بیرون می‌زد یا روی ردیف بعدی
 //      می‌افتاد → همان «بریدگی/سرریز».
 //      حالا عرض و ارتفاع از اندازهٔ واقعی متن می‌آید: TextSetFont + TextGetSize
-//      (مرجع رسمی MQL5 — بخش «۸: یادداشت‌های پلتفرم» در مستندات فنی پروژه).
+//      (مرجع رسمی MQL5 — TextSetFont / TextGetSize در مستندات رسمی MQL5).
 //   ۲) ردیف‌های شرطی (clocknote / sb / asia / mtfreason / dirline / entry / sl /
 //      tp1..tp3 / rr) وقتی شرطشان false می‌شدند هرگز بازنویسی نمی‌شدند و متن
 //      قدیمی روی چارت می‌ماند. حالا در DashEnd هر برچسبی که در همین pass
