@@ -91,6 +91,8 @@ Issues and pull requests are welcome. Please keep changes consistent with the cl
 
 Released under the [MIT License](LICENSE) — free to use, modify and redistribute with attribution.
 
+> **Trading disclaimer:** This software is provided for educational and analytical purposes only and does not provide financial advice. Trading foreign exchange and CFDs on margin carries a high level of risk and may not be suitable for all investors. Past performance of any indicator or strategy is not indicative of future results. The authors and contributors accept no responsibility for any financial losses incurred through the use of this software — always test on a demo account first and never risk capital you cannot afford to lose.
+
 ---
 
 *MetaTrader 5 and MetaEditor are trademarks of MetaQuotes Software Corp. This project is not affiliated with or endorsed by MetaQuotes. References to trading schools (ICT, SMC, Wyckoff, etc.) are for educational identification of public concepts only.*
