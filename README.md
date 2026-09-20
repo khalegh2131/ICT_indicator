@@ -6,6 +6,10 @@ A free, open-source **MetaTrader 5 indicator** that brings **nine trading school
 
 It is both an **indicator and a teacher**: click on any line, zone or event and a Persian explanation panel opens — what the object is, why it formed, what validates it, what invalidates it, and how to verify the number by hand on your own chart.
 
+![ICT Assistant on XAUUSD M15 — order blocks, FVGs, liquidity pools and swept swings](docs/screenshot.png)
+
+*XAUUSD M15 — order blocks, FVGs, liquidity pools (EQH/EQL, BSL/SSL) and swept swings, drawn live by the indicator.*
+
 > **Copyright © Khaleq Salehi** — khaleq.sa@gmail.com
 > Licensed under the MIT License (see [LICENSE](LICENSE)).
 
