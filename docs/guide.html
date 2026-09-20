@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>راهنمای فارسی — ICT Assistant برای متاتریدر ۵</title>
+<meta name="description" content="راهنمای فارسی قدم‌به‌قدم اندیکاتور ICT Assistant: نصب، اولین اجرا، پنل توضیح، تمیز کردن چارت، هر تایم‌فریم برای خودش، کارایی، واژه‌نامه و عیب‌یابی.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b1017'/><rect x='6' y='12' width='20' height='3' fill='%23d4a017'/><rect x='6' y='18' width='12' height='3' fill='%232f9e6f'/></svg>">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">ICT<span>Assistant</span></div>
+    <nav class="links">
+      <a href="index.html">صفحهٔ اصلی</a>
+      <a href="#install">نصب</a>
+      <a href="#first">اولین اجرا</a>
+      <a href="#panel">پنل توضیح</a>
+      <a href="#clean">چارت تمیز</a>
+      <a href="#tf">تایم‌فریم‌ها</a>
+      <a href="#perf">کارایی</a>
+      <a href="#glossary">واژه‌نامه</a>
+      <a href="#trouble">عیب‌یابی</a>
+      <a href="https://github.com/khalegh2131/ICT_indicator" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <h1>راهنمای فارسی — از نصب تا استفادهٔ روزمره</h1>
+    <p class="lead">
+      این راهنما فرض می‌کند هیچ چیزی از پروژه نمی‌دانی. قدم‌به‌قدم می‌رویم: نصب، اولین اجرا،
+      کار با پنل توضیح، تمیز نگه‌داشتن چارت، رفتار هر تایم‌فریم، کارایی، و اینکه چطور خودت
+      درستی اعداد را بازبینی کنی.
+    </p>
+  </div>
+
+  <section id="install">
+    <h2>۱. نصب</h2>
+    <p class="sub">دو راه داری: فایل کامپایل‌شدهٔ آماده، یا کامپایل خودت از سورس.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>راه الف — فایل آماده (ساده‌تر)</h3>
+        <p>
+          ۱) از صفحهٔ Release فایل <code>ICT_Assistant_Canonical_v0_1.ex5</code> را دانلود کن.<br>
+          ۲) آن را در پوشهٔ <code>MQL5\Indicators\</code> ترمینالت بگذار.<br>
+          ۳) در پنجرهٔ Navigator راست‌کلیک → <strong>Refresh</strong>.<br>
+          ۴) اندیکاتور را روی چارت بکش.
+        </p>
+      </div>
+      <div class="card">
+        <h3>راه ب — کامپایل از سورس (کنترل کامل)</h3>
+        <p>
+          ۱) بستهٔ سورس را از همان Release بگیر (یا مخزن را clone کن).<br>
+          ۲) فایل <code>.mq5</code> را در <code>MQL5\Indicators\</code> بگذار.<br>
+          ۳) در متاتریدر <strong>F4</strong> بزن تا MetaEditor باز شود و <strong>Compile</strong> کن.<br>
+          ۴) باید با <strong>۰ خطا و ۰ هشدار</strong> بسازد.
+        </p>
+      </div>
+    </div>
+
+    <p class="sub" style="margin-top:26px">مسیر پوشهٔ دادهٔ ترمینال را چطور پیدا کنم؟</p>
+    <p style="color:var(--fg-dim); margin-top:-10px">
+      در متاتریدر: <strong>File → Open Data Folder</strong>. پوشهٔ <code>MQL5\Indicators\</code> داخل همان است.
+    </p>
+
+    <div class="callout">
+      <strong>پیشنهاد:</strong> برای اولین بار روی حساب <strong>دمو</strong> و روی XAUUSD تایم‌فریم M15 امتحان کن.
+      پیش‌فرض‌های اندیکاتور برای طلا تنظیم شده‌اند.
+    </div>
+  </section>
+
+  <section id="first">
+    <h2>۲. اولین اجرا — چه چیزی باید ببینی</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>چه چیزی</th><th>توضیح</th></tr></thead>
+        <tbody>
+          <tr><td><strong>چارت تمیز</strong></td><td>برچسب‌های انگلیسی آبجکت‌ها روی چارت مخفی‌اند و داشبورد خاموش است. این عمدی است.</td></tr>
+          <tr><td><strong>نوار ریسک برگشت</strong></td><td>یک نوار تک‌خطی گوشهٔ چارت: نزدیک‌ترین سطح، نوع و وضعیتش، فاصله بر حسب ATR، پیشرفت لگ و امتیاز ریسک برگشت. با <code>InpShowRiskStrip</code> کنترل می‌شود.</td></tr>
+          <tr><td><strong>نواحی و خطوط</strong></td><td>نواحی FVG، اردربلاک، عرضه/تقاضا و سطوح نقدینگی بر اساس کلیدهای هر خانواده رسم می‌شوند.</td></tr>
+          <tr><td><strong>پیام Journal</strong></td><td>در تب Journal یک خط می‌نویسد که حالت پنل توضیح فعال است و آفست واقعی بروکر را اعلام می‌کند.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">
+      اگر بعد از attach چیزی ندیدی، اول مطمئن شو در تب <strong>Experts</strong> خطایی نیست و چارت به‌اندازهٔ کافی کندل دارد.
+      تحلیل روی کندل <strong>بسته</strong> انجام می‌شود، پس ممکن است تا بسته‌شدن کندل جاری چیزی اضافه نشود.
+    </p>
+  </section>
+
+  <section id="panel">
+    <h2>۳. پنل توضیح — قلب این ابزار</h2>
+    <p class="sub">این اندیکاتور هم رسم می‌کند و هم یاد می‌دهد. آموزش از همین‌جا می‌آید.</p>
+
+    <div class="grid">
+      <div class="card">
+        <h3>دو حالت باز شدن</h3>
+        <p>
+          ورودی <code>InpExplainOpen</code>:<br>
+          • <strong>EXPLAIN_OPEN_CLICK</strong> (پیش‌فرض) — روی آبجکت کلیک می‌کنی، پنل باز می‌شود. موس کاملاً آزاد است و هیچ رویداد حرکتی موس فعال نمی‌شود.<br>
+          • <strong>EXPLAIN_OPEN_HOVER</strong> — سبک قدیمی: موس را روی آبجکت ببر.
+        </p>
+      </div>
+      <div class="card">
+        <h3>بستن پنل</h3>
+        <p>کلیک بعدی روی همان آبجکت، کلیک روی فضای خالی چارت، یا کلید <strong>Esc</strong>. یعنی دیدِ چارت هیچ‌وقت برای مدت نامعلوم اشغال نمی‌ماند.</p>
+      </div>
+      <div class="card">
+        <h3>پنل چه چیزی می‌گوید</h3>
+        <p>ماهیت آبجکت · قاعدهٔ دقیقی که آن را ساخت · شرط تأیید · شرط ابطال · و روش <strong>بازبینی دستی عدد</strong> روی چارت خودت. هر جمله از روی قاعدهٔ کد نوشته شده، نه از روی حدس.</p>
+      </div>
+      <div class="card">
+        <h3>ظاهر پنل</h3>
+        <p>
+          <code>InpShowExplainPanel</code> روشن/خاموش ·
+          <code>InpExplainPanelWidth</code> عرض ·
+          <code>InpExplainFontSize</code> اندازهٔ قلم ·
+          <code>InpExplainFont</code> نام قلم ·
+          <code>InpExplainMaxRows</code> سقف تعداد خط.
+        </p>
+      </div>
+      <div class="card">
+        <h3>فارسی چطور درست نمایش داده می‌شود</h3>
+        <p>
+          متاتریدر پشتیبانی بومی راست‌به‌چپ ندارد و متن را چپ‌چین می‌کند. این پروژه یک لایهٔ رندر اختصاصی دارد
+          که خودش ترتیب حروف را می‌چیند، اتصال‌ها را حفظ می‌کند و متن بلند را در چند خط می‌شکند —
+          به‌جای اینکه یک خط طولانی از کادر بیرون بزند.
+        </p>
+      </div>
+      <div class="card">
+        <h3>خروجی نوشتاری</h3>
+        <p>با <code>InpWriteExplainCsv</code> می‌توانی همهٔ توضیح‌ها را در یک فایل CSV داشته باشی — برای مطالعه در بیرون از ترمینال.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="clean">
+    <h2>۴. چارت تمیز بماند، ولی چیزی از دست نرود</h2>
+    <p class="sub">اصل طراحی: «ضروری‌ها روشن، تزئینات خاموش» — و خاموش‌کردن رسم، هرگز کشف را متوقف نمی‌کند.</p>
+
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>می‌خواهی…</th><th>این ورودی</th></tr></thead>
+        <tbody>
+          <tr><td>سقف نواحی و سطوح رسم‌شده را کم کنی</td><td><code>InpMaxDrawnZones</code> · <code>InpMaxDrawnLevels</code></td></tr>
+          <tr><td>سقف آبجکت‌های Frozen را تعیین کنی</td><td><code>InpMaxFrozenObjects</code> · <code>InpFrozenHistoryEnabled</code></td></tr>
+          <tr><td>عمر آبجکت‌های جاروشده را کوتاه کنی</td><td><code>InpSweptKeepBars</code></td></tr>
+          <tr><td>انقضای کلی رسم را تنظیم کنی</td><td><code>InpExpiryKeepBars</code> · <code>InpDeleteExpiredObjects</code></td></tr>
+          <tr><td>سقف رجیستری هر لایه را بدانی</td><td><code>InpMaxFVG</code> · <code>InpMaxOB</code> · <code>InpMaxLiquidity</code> · <code>InpMaxSwings</code> · <code>InpMaxPOI</code></td></tr>
+          <tr><td>داشبورد کامل را ببینی (اختیاری)</td><td><code>InpShowDashboard</code></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top:22px">
+      <strong>مهم:</strong> انقضا یعنی <em>حذف</em>، نه تلنبار کردن. آبجکتی که باطل شده از چارت و رجیستری کنار می‌رود.
+      سیاست سقف‌ها FIFO است تا تاریخچه وسط سشن بی‌صدا ناپدید نشود.
+      اگر این رفتار را نمی‌خواهی، <code>InpDeleteExpiredObjects</code> را خاموش کن.
+    </div>
+  </section>
+
+  <section id="tf">
+    <h2>۵. هر تایم‌فریم برای خودش</h2>
+    <p style="color:var(--fg-dim)">
+      هر چارت رجیستری، رسم و چرخهٔ عمر مستقل خودش را دارد. اگر اندیکاتور را روی M15 و H1 و H4 بگذاری،
+      هیچ‌کدام آبجکت دیگری را بازنویسی نمی‌کند و شمارش‌ها قاطی نمی‌شوند.
+      تایم‌فریم بالاتر به‌عنوان <strong>دادهٔ کانتکست</strong> خوانده می‌شود (مثلاً برای Bias روی H4)،
+      ولی هرگز چیزی روی چارت جاری رسم نمی‌کند.
+      تایم‌فریم‌های زنجیره با <code>InpTF_Bias</code> تا <code>InpTF_Confirm2</code> قابل تنظیم‌اند.
+    </p>
+    <p style="color:var(--fg-dim)">
+      یک قاعدهٔ سخت هم وجود دارد: تایم‌فریم‌های پایین می‌توانند ستاپ را تأیید یا رد کنند،
+      ولی <strong>هرگز نمی‌توانند Bias تایم‌فریم بالاتر را برگردانند</strong>.
+    </p>
+  </section>
+
+  <section id="perf">
+    <h2>۶. کارایی — چرا سرعت چارت نمی‌افتد</h2>
+    <div class="grid">
+      <div class="card"><h3>یک‌بار در هر کندل بسته</h3><p>بار سنگین تحلیل روی هر تیک اجرا نمی‌شود. بین بسته‌شدن کندل‌ها فقط یک مسیر سریع برای رندر باقی می‌ماند.</p></div>
+      <div class="card"><h3>سقف‌دار بودن همهٔ رجیستری‌ها</h3><p>هیچ آرایه‌ای بدون سقف رشد نمی‌کند؛ هر لایه سقف خودش را دارد و سیاست حذف مشخص است.</p></div>
+      <div class="card"><h3>کپی سری‌ها فقط وقتی لازم است</h3><p>سری‌های قیمت و ATR نه در هر تیک، بلکه فقط در کندل تازهٔ بسته یا بازسازی اولیه کپی می‌شوند.</p></div>
+      <div class="card"><h3>هندل مشترک فایل‌های شاهد</h3><p>نوشتن ردیف‌های تشخیصی با هندل باز انجام می‌شود، نه باز/بسته‌کردن فایل در هر کندل.</p></div>
+    </div>
+    <p class="note">اگر باز هم کند بود، اول لایه‌های سنگین را خاموش کن و سقف‌های رسم را کم کن؛ اگر مشکل باقی ماند در مخزن Issue باز کن و نماد، تایم‌فریم و تعداد کندل‌های چارت را بنویس.</p>
+  </section>
+
+  <section id="schools">
+    <h2>۷. چه چیزی تشخیص داده می‌شود</h2>
+    <p class="sub">نُه مکتب در یک ابزار. هر مورد کلید رسم مستقل دارد.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>مکتب</th><th>مفاهیمی که پیاده شده</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ICT</strong></td><td>BOS · CHoCH/MSS · FVG در پنج نوع · اردربلاک با انواع · Breaker · Mitigation · جارو/Judas · BSL/SSL · سقف و کف برابر · Displacement · AMD · Premium/Discount · OTE · PD-Array/POI · Silver Bullet و هم‌سویی HTF-LTF · IPDA و Quarterly Theory</td></tr>
+          <tr><td><strong>SMC</strong></td><td>ساختار شکست · FVG با Consequent Encroachment · اردربلاک Extreme و Internal/External · Breaker و Mitigation · شکار نقدینگی · نقدینگی خط روند/رنج/سشن · مدل‌های ورود · Mitigation تودرتو</td></tr>
+          <tr><td><strong>Market Maker Model</strong></td><td>انباشت · دستکاری (Sweep/Judas) · توزیع · PD-Array · اردربلاک (Breaker + Mitigation) · نقدینگی BSL/SSL · FVG (BISI/SIBI) · Smart Money Reversal</td></tr>
+          <tr><td><strong>وایکاف</strong></td><td>انباشت/صعود/توزیع/نزول · Spring و Upthrust · SOS/SOW · LPS/LPSY · SC/BC · AR/ST · PS/PSY · Test و Absorption · تحلیل تلاش در برابر نتیجه · فازهای A تا E</td></tr>
+          <tr><td><strong>عرضه و تقاضا (کلاسیک)</strong></td><td>ناحیهٔ عرضه/تقاضا · RBR · DBD · RBD · DBR · تازه در برابر تست‌شده · Flip Zone · Engulfing در نواحی · امتیاز قدرت ناحیه</td></tr>
+          <tr><td><strong>تئوری بازار حراج / Market Profile</strong></td><td>POC · Value Area با VAH/VAL · HVN · LVN · تعادل/عدم تعادل · Initial Balance · شمارش TPO · پذیرش/رد · انواع باز شدن · انواع روز</td></tr>
+          <tr><td><strong>پروفایل حجم</strong></td><td>POC · Value Area · HVN/LVN · Naked POC · گره‌های حجمی محلی · شکل پروفایل · پروفایل سشن و دامنهٔ مرئی (به‌صورت تقریب تیک‌ولوم)</td></tr>
+          <tr><td><strong>RTM</strong></td><td>نواحی عرضه/تقاضا به سبک RTM · Flip Zones · تله‌های ورود · کندل‌های مومنتوم · فشردگی/انبساط · استخرهای نقدینگی · Engulfing و Rejection · هم‌گرایی چند تایم‌فریم · تحویل قیمت</td></tr>
+          <tr><td><strong>پرایس‌اکشن ال‌بروکس</strong></td><td>کندل روند · دوجی و بدنه‌های کوچک · کندل سیگنال و ورود · کندل تأیید · Always-In · رنج دوطرفه · شکست و شکست ناموفق · پول‌بک H1–H4 و L1–L4 · Measured Move · ۲۰ EMA · خط روند و کانال · تله و کندل برگشتی</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="verify">
+    <h2>۸. چطور خودت بفهمی محاسبه درست است</h2>
+    <ol class="steps">
+      <li><strong>پنل توضیح.</strong> هر آبجکت روش بازبینی دستی عددش را می‌گوید: کدام کندل‌ها، کدام مرز، و چه شرطی.</li>
+      <li><strong>ابزارهای اعتبارسنجی.</strong> در پوشهٔ <code>tools/</code> بیست ابزار PowerShell است که قاعده‌ها را قفل می‌کنند. با <code>powershell -File tools/Validate-Phase37.ps1</code> می‌توانی هرکدام را جدا اجرا کنی.</li>
+      <li><strong>آزمون رفتاری روی کندل ساختگی.</strong> اندیکاتور یک هارنس داخلی دارد (ورودی <code>InpRunBehaviorSelfTest</code>) که ۲۵ سناریو با پاسخ معلوم را روی <strong>همان توابع واقعی تشخیص</strong> اجرا می‌کند و گزارش را در <code>ICT_Assistant_Canonical_SelfTest.csv</code> می‌نویسد. ابزار <code>Validate-Phase37.ps1</code> آن گزارش را می‌خواند و اعداد را با یک بازمحاسبهٔ مستقل مقایسه می‌کند.</li>
+    </ol>
+    <div class="callout">
+      در آن آزمون، یک سناریو عمداً انتظار <strong>غلط</strong> دارد. اگر آن ردیف شکست نخورد، یعنی مقایسه کور است و بقیهٔ PASSها بی‌ارزش‌اند.
+      این «دندان» عمدی است تا سبز بودن گزارش به‌تنهایی معنا نداشته باشد.
+    </div>
+  </section>
+
+  <section id="glossary">
+    <h2>۹. واژه‌نامهٔ کوتاه</h2>
+    <div class="tbl-wrap">
+      <table>
+        <thead><tr><th>واژه</th><th>یعنی چه</th></tr></thead>
+        <tbody>
+          <tr><td><strong>FVG</strong> — Fair Value Gap</td><td>گپ سه‌کندلی که یک سمت بازار سریع حرکت کرده و ناکارآمدی جا گذاشته است.</td></tr>
+          <tr><td><strong>BISI / SIBI</strong></td><td>نام‌گذاری ICT برای FVG صعودی / نزولی.</td></tr>
+          <tr><td><strong>CE</strong> — Consequent Encroachment</td><td>میانهٔ گپ؛ «خط تصمیم». لمس میانه با لمس لبه فرق دارد.</td></tr>
+          <tr><td><strong>OB</strong> — Order Block</td><td>آخرین کندل مخالف پیش از یک حرکت قوی؛ ناحیهٔ ورود سفارش‌گذار بزرگ.</td></tr>
+          <tr><td><strong>BOS</strong></td><td>شکست ساختار در جهت روند موجود.</td></tr>
+          <tr><td><strong>CHoCH / MSS</strong></td><td>تغییر کاراکتر بازار؛ اولین نشانهٔ چرخش ساختار.</td></tr>
+          <tr><td><strong>Displacement</strong></td><td>کندل پرقدرت با بدنهٔ بزرگ که ناکارآمدی می‌سازد.</td></tr>
+          <tr><td><strong>Sweep / Judas</strong></td><td>فتیله فراتر از یک سطح نقدینگی با بستهٔ برگشتی داخل. اگر بسته بیرون بیفتد، شکست است نه جارو.</td></tr>
+          <tr><td><strong>BSL / SSL</strong></td><td>نقدینگی سمت خرید (بالای سقف‌ها) / سمت فروش (زیر کف‌ها).</td></tr>
+          <tr><td><strong>PDH / PDL / PWH / PWL</strong></td><td>سقف و کف روز قبل / هفتهٔ قبل.</td></tr>
+          <tr><td><strong>EQH / EQL</strong></td><td>سقف‌ها یا کف‌های برابر — هدف نقدینگی.</td></tr>
+          <tr><td><strong>Premium / Discount</strong></td><td>بالای ۵۰٪ دامنه گران (Premium)، پایین آن ارزان (Discount).</td></tr>
+          <tr><td><strong>OTE</strong></td><td>ناحیهٔ ورود بهینه، حدوداً ۰٫۶۲ تا ۰٫۷۹ اصلاح، با پنجرهٔ طلایی ۰٫۷۰۵.</td></tr>
+          <tr><td><strong>POI / PD-Array</strong></td><td>نقطهٔ مورد علاقه؛ رجیستری نواحی قابل معامله با امتیاز کیفیت.</td></tr>
+          <tr><td><strong>DOL</strong></td><td>سطح هدف تحویل قیمت؛ جایی که بازار احتمالاً به آن می‌رود.</td></tr>
+          <tr><td><strong>IPDA</strong></td><td>سطوح مرجع بلندمدت (سقف/کف ۲۰، ۴۰، ۶۰ روزه).</td></tr>
+          <tr><td><strong>AMD / Power of Three</strong></td><td>انباشت، دستکاری، توزیع — قالب سه‌مرحله‌ای حرکت.</td></tr>
+          <tr><td><strong>POC / VA / HVN / LVN</strong></td><td>پرترافیک‌ترین قیمت پروفایل / ناحیهٔ ارزش / گرهٔ حجم بالا / گرهٔ حجم پایین.</td></tr>
+          <tr><td><strong>Always-In</strong></td><td>وضعیت ال‌بروکس: بازار در ذهن معامله‌گر «همیشه خریدار» است یا «همیشه فروشنده».</td></tr>
+          <tr><td><strong>No-repaint</strong></td><td>سیگنال بعد از منتشر شدن عوض نمی‌شود؛ تحلیل فقط روی کندل بسته.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="trouble">
+    <h2>۱۰. عیب‌یابی</h2>
+    <details><summary>اندیکاتور روی چارت نیست</summary><p>پس از گذاشتن فایل، از Navigator → Indicators → Refresh بزن. اگر هنوز نیست، بررسی کن فایل در <code>MQL5\Indicators\</code> باشد (نه پوشهٔ دیگر) و در Journal خطای کامپایل نباشد.</p></details>
+    <details><summary>روی چارت هیچ چیزی رسم نشده</summary><p>سه دلیل محتمل: (۱) کندل کافی روی چارت نیست — تایم‌فریم‌های کوچک تاریخچه را کم بخوانند؛ کمی اسکرول کن یا تاریخچه را دانلود کن. (۲) لایهٔ مربوطه خاموش است. (۳) تحلیل فقط روی کندل بسته اجرا می‌شود و هنوز کندل بستهٔ مناسبی برای آن الگو وجود نداشته است.</p></details>
+    <details><summary>پنل توضیح باز نمی‌شود</summary><p>در حالت پیش‌فرض باید روی آبجکت <strong>کلیک</strong> کنی (نه صرفاً عبور موس). اگر روی حالت HOVER باشی (<code>InpExplainOpen=EXPLAIN_OPEN_HOVER</code>)، موس را باید دقیقاً روی خود خط یا مرز ناحیه ببری و در ورودی <code>InpExplainHoverTolPx</code> تلورانس را کمی بیشتر کنی.</p></details>
+    <details><summary>متن پنل بریده یا نامرتب است</summary><p>عرض و اندازهٔ قلم را با <code>InpExplainPanelWidth</code>، <code>InpExplainFontSize</code> و <code>InpExplainMaxRows</code> تنظیم کن. اندازهٔ قلم را عوض کن و اندیکاتور را دوباره attach کن (تغییر قلم در rebuild بعدی اعمال می‌شود).</p></details>
+    <details><summary>چارت شلوغ است</summary><p>سقف‌های رسم (<code>InpMaxDrawnZones</code>، <code>InpMaxDrawnLevels</code>) را کم کن، عمر آبجکت‌های جاروشده (<code>InpSweptKeepBars</code>) را کوتاه کن، یا لایه‌های تزئینی را خاموش کن. کشف با خاموش‌کردن رسم متوقف نمی‌شود.</p></details>
+    <details><summary>چارت کند شده</summary><p>اول تعداد آبجکت‌ها را با سقف‌ها کم کن، بعد لایه‌های سنگین‌تر (رسم HTF، خطوط روند، پروفایل) را خاموش کن. اگر روی M1 کار می‌کنی، تعداد کندل اسکن تاریخچه را کم کن.</p></details>
+    <details><summary>پس از کامپایل مجدد، تغییرات را نمی‌بینم</summary><p>اندیکاتور را از چارت <strong>Remove</strong> کن، در Navigator راست‌کلیک → Refresh، و دوباره روی چارت بکش. متاتریدر نسخهٔ قدیمی را در حافظه نگه می‌دارد.</p></details>
+    <details><summary>اعداد را قبول ندارم؛ چطور گزارش بدهم؟</summary><p>در مخزن Issue باز کن و بنویس: نماد، تایم‌فریم، زمان کندل، اسم آبجکت، انتظار تو و آنچه دیدی. اگر پنل توضیح متنش را نشان می‌دهد، همان را هم کپی کن. با این اطلاعات می‌توان قاعده را به‌صورت دقیق بررسی کرد.</p></details>
+  </section>
+
+  <section id="limits">
+    <h2>۱۱. محدودیت‌ها و سلب مسئولیت</h2>
+    <div class="tbl-wrap">
+      <table>
+        <tbody>
+          <tr><td><strong>فاصلهٔ استاپ</strong></td><td>بافر ثابت است، ATR‑آگاه نیست و <code>SYMBOL_TRADE_STOPS_LEVEL</code> را در نظر نمی‌گیرد.</td></tr>
+          <tr><td><strong>معیارهای حجمی</strong></td><td>تیک‌ولوم است، نه حجم واقعی معامله‌شده. دادهٔ اردرفلو/فوتپرینت/دلتای واقعی از فید نیتیو متاتریدر در فارکس در دسترس نیست.</td></tr>
+          <tr><td><strong>امتیاز ریسک برگشت</strong></td><td>مجموع وزن‌دار شواهد است، نه احتمال کالیبره‌شده.</td></tr>
+          <tr><td><strong>ربات نیست</strong></td><td>سفارش نمی‌گذارد، مدیریت نمی‌کند و توصیهٔ مالی نیست.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© <span class="mono">2026</span> خالق صالحی — مجوز MIT</span>
+      <span><a href="index.html">صفحهٔ اصلی</a> · <a href="https://github.com/khalegh2131/ICT_indicator" target="_blank" rel="noopener">مخزن</a></span>
+    </div>
+    <p class="disc">
+      MetaTrader 5 و MetaEditor علامت‌های تجاری MetaQuotes Software Corp هستند؛ این پروژه وابسته به MetaQuotes نیست و تأیید آن را ندارد.
+      <br>
+      این نرم‌افزار فقط برای اهداف آموزشی و تحلیلی ارائه شده و توصیهٔ مالی نیست. معاملهٔ مارجین ریسک بالایی دارد و ممکن است برای همه مناسب نباشد.
+      عملکرد گذشته نشانهٔ نتیجهٔ آینده نیست. مسئولیت هر زیان مالی بر عهدهٔ کاربر است — ابتدا روی حساب دمو آزمایش کن.
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

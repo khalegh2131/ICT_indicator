@@ -10,6 +10,9 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 
 *XAUUSD M15 — order blocks, FVGs, liquidity pools (EQH/EQL, BSL/SSL) and swept swings, drawn live by the indicator.*
 
+> **Try it without MetaTrader:** [interactive demo](https://khalegh2131.github.io/ICT_indicator/) — click the numbered spots on the chart to see exactly what the explanation panel says.
+> **فارسی:** [راهنمای کامل فارسی](https://khalegh2131.github.io/ICT_indicator/guide.html)
+
 > **Copyright © Khaleq Salehi** — khaleq.sa@gmail.com
 > Licensed under the MIT License (see [LICENSE](LICENSE)).
 
@@ -23,7 +26,8 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 | Recalculate with repaint | Analysis runs on **closed bars only**; pivots confirm before they publish |
 | One global model across all timeframes | **Each timeframe works independently** with its own registry and drawing |
 | Clutter that grows forever | Registry caps, FIFO expiry, and invalidated history are **removed automatically** |
-| Vague claims | Every operational definition is documented, and **19 rule validators** lock the rules |
+| Vague claims | Every operational definition is documented, and **20 rule validators** lock the rules |
+| Nothing proving the arithmetic | A behavior harness runs 25 synthetic-candle scenarios through the **real detection functions** and compares the numbers against an independent recomputation |
 
 ## Feature overview
 
@@ -57,7 +61,7 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 
 - **Chart too busy?** Lower `InpMaxDrawnLevels` / `InpMaxDrawnZones`, or switch whole layers off — every family has its own toggle and its own timeframe scope.
 - **Want the dashboard?** `InpShowDashboard=true` (off by default; the one-line risk strip replaces it).
-- **Explanations:** `InpExplainOnlyWithCtrl` controls whether the panel needs the key held. Panel rendering mode (`InpExplainRenderMode`) is documented in `07_DOCUMENTATION/`.
+- **Explanations:** `InpExplainOpen` chooses how the panel opens — `EXPLAIN_OPEN_CLICK` (default; the mouse stays free) or `EXPLAIN_OPEN_HOVER` (hold the pointer over an object). Close it with Esc or the next click. Panel sizing lives in `InpExplainPanelWidth` / `InpExplainFontSize` / `InpExplainMaxRows`, and `InpExplainRenderMode` is documented in `07_DOCUMENTATION/`.
 - **Performance:** heavy analysis runs once per closed bar, not per tick; registries are capped and expired objects are deleted, so the chart stays fast on M1.
 
 ## Repository layout
@@ -67,7 +71,8 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 05_TESTS_AND_VALIDATION/   CSV fixtures for the validators
 07_DOCUMENTATION/          architecture, audits, validation plan, research notes
 08_FINAL_PACKAGE/          ready-to-compile package
-tools/                     sync-compile pipeline + 19 rule validators (PowerShell)
+docs/                      GitHub Pages site: landing page, interactive demo, Persian guide
+tools/                     sync-compile pipeline + 20 rule validators (PowerShell)
 ```
 
 The build pipeline (`tools/Sync-And-Compile-Canonical.ps1`) syncs the canonical source to your MT5 data folder and compiles it via MetaEditor, then verifies freshness by timestamp — it never trusts exit codes alone.
@@ -86,6 +91,14 @@ The build pipeline (`tools/Sync-And-Compile-Canonical.ps1`) syncs the canonical 
 - Volume-based metrics (Profile family, Effort vs Result) use **tick volume**, not real traded volume.
 - The reversal-risk score is a weighted-evidence sum, not a calibrated probability; per-level hit-rate statistics require runtime CSV collection (tooling included, data not).
 - Not a trading robot; it does not place or manage orders, and it is **not financial advice**.
+
+## Verifying the arithmetic
+
+Most indicator repositories ask you to trust them. This one ships three independent ways to check it:
+
+1. **The explanation panel itself** tells you how to recompute the number by hand — which bars, which boundary, which condition.
+2. **20 rule validators** in `tools/` lock the operational definitions against silent drift.
+3. **A behavior harness on synthetic data.** The indicator can run 25 hand-built candle scenarios (FVG geometry, the minimum-gap guard, the implied-FVG mid-wick formula, volume imbalance, order-block origin bar and lookback, sweep confirmation and nearest-level ownership) through the *real* `DetectFVG` / `DetectOB` / `DetectSweep` functions and write `ICT_Assistant_Canonical_SelfTest.csv`. `tools/Validate-Phase37.ps1` recomputes every expected number independently and requires the report to match — and it requires exactly **one deliberately failing** sensitivity row, so a report that cannot fail is rejected rather than celebrated.
 
 ## Contributing
 

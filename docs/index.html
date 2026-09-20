@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ICT Assistant — اندیکاتور چندمکتبی متاتریدر ۵</title>
+<meta name="description" content="اندیکاتور متن‌باز متاتریدر ۵ که نُه مکتب معامله‌گری را در یک ابزار جمع می‌کند و روی هر خط و ناحیه توضیح فارسی می‌دهد: چرا شکل گرفت، چه چیزی تأییدش می‌کند و چه چیزی باطلش می‌کند.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%230b1017'/><rect x='6' y='12' width='20' height='3' fill='%23d4a017'/><rect x='6' y='18' width='12' height='3' fill='%232f9e6f'/></svg>">
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <div class="brand">ICT<span>Assistant</span></div>
+    <nav class="links">
+      <a href="#demo">دمو</a>
+      <a href="#features">امکانات</a>
+      <a href="#schools">نُه مکتب</a>
+      <a href="#install">نصب</a>
+      <a href="#rules">قواعد طراحی</a>
+      <a href="#faq">پرسش‌ها</a>
+      <a href="guide.html">راهنمای فارسی</a>
+      <a href="https://github.com/khalegh2131/ICT_indicator" target="_blank" rel="noopener">GitHub</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <div class="hero">
+    <h1>یک اندیکاتور متاتریدر ۵ که هم <em>رسم می‌کند</em> و هم <em>یاد می‌دهد</em></h1>
+    <p class="lead">
+      نُه مکتب معامله‌گری در یک ابزار: ICT · SMC · Market Maker Model · وایکاف · عرضه و تقاضا ·
+      تئوری بازار حراج · پروفایل حجم · RTM · پرایس‌اکشن ال‌بروکس.
+      روی هر خط، ناحیه یا رویداد که کلیک کنی، پنل توضیح فارسی باز می‌شود: این چیست، چرا شکل گرفت،
+      چه چیزی تأییدش می‌کند، چه چیزی باطلش می‌کند — و عددش را چطور خودت روی چارت بازبینی کنی.
+    </p>
+    <div class="chips">
+      <span class="chip gold">MetaTrader 5 · MQL5</span>
+      <span class="chip green">مجوز MIT · متن‌باز</span>
+      <span class="chip">بدون ری‌پینت · فقط کندل بسته</span>
+      <span class="chip">هر تایم‌فریم مستقل</span>
+      <span class="chip">۲۰ ابزار اعتبارسنجی</span>
+    </div>
+    <div class="btns">
+      <a class="btn primary" href="https://github.com/khalegh2131/ICT_indicator/releases/latest" target="_blank" rel="noopener">دانلود آخرین نسخه</a>
+      <a class="btn" href="#demo">دیدن دموی پنل توضیح</a>
+      <a class="btn" href="guide.html">راهنمای فارسی نصب</a>
+    </div>
+  </div>
+
+  <section id="demo">
+    <h2>دمو: روی نقطه‌های روی چارت کلیک کن</h2>
+    <p class="sub">
+      همین کاری که در متاتریدر می‌کنی — کلیک روی یک ناحیه — فقط بازسازی‌شده در مرورگر.
+      پنل در ستون کنار باز می‌شود و <strong>روی چارت را نمی‌پوشاند</strong>.
+    </p>
+
+    <div class="demo">
+      <div>
+        <div class="chart-box" id="chart">
+          <img src="screenshot.png" alt="چارت XAUUSD M15 با نواحی FVG، اردربلاک، نقدینگی و جاروها">
+          <button class="hot"      style="left:12.0%; top:47.1%" data-h="sweepbsl" title="جاروی نقدینگی سقف">۱</button>
+          <button class="hot k2"   style="left:56.2%; top:74.8%" data-h="eql"      title="کف‌های برابر — نقدینگی فروش">۲</button>
+          <button class="hot k3"   style="left:18.5%; top:59.0%" data-h="ob"       title="اردربلاک نزولی (عرضه)">۳</button>
+          <button class="hot k4"   style="left:70.6%; top:42.0%" data-h="ipda"     title="نقدینگی قدیمی بلندمدت (IPDA)">۴</button>
+          <button class="hot"      style="left:34.5%; top:90.3%" data-h="sweepssl" title="جاروی نقدینگی کف">۵</button>
+        </div>
+        <p class="note">
+          چارت واقعی XAUUSD تایم‌فریم M15 با همهٔ لایه‌های زندهٔ اندیکاتور.
+          متن پنل، همان متنی است که اندیکاتور نشان می‌دهد؛ برای مرورگر بازسازی شده است.
+        </p>
+      </div>
+
+      <aside class="panel" id="panel">
+        <p class="ptitle">یک نقطه را انتخاب کن</p>
+        <span class="ptag">آموزش تعاملی</span>
+        <p>روی یکی از شماره‌ها روی چارت کلیک کن تا ببینی اندیکاتور دقیقاً چه می‌گوید: ماهیت آبجکت، قاعده‌ای که آن را ساخت، شرط تأیید، شرط ابطال، و روش بازبینی دستی عدد.</p>
+        <p class="hint">پنل واقعی در متاتریدر با کلیک یا با نگه‌داشتن کلید (پیش‌فرض Ctrl) باز می‌شود و با Esc بسته می‌شود.</p>
+      </aside>
+    </div>
+  </section>
+
+  <section id="features">
+    <h2>چه چیزی می‌سازد</h2>
+    <p class="sub">هر خانواده کلید روشن/خاموش مستقل دارد و کشف همیشه فعال است، حتی وقتی رسم خاموش باشد.</p>
+    <div class="grid">
+      <div class="card">
+        <h3><span class="dot" style="background:#d4a017"></span>ساختار و جهت</h3>
+        <p>BOS · CHoCH / MSS با پیوت‌های بدون ری‌پینت · موتور سویینگ با سقف و کف محافظت‌شده · مالکیت Bias روی H4 (تایم‌فریم پایین می‌تواند ستاپ را تأیید یا رد کند، ولی هرگز Bias را برنمی‌گرداند).</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#2f9e6f"></span>نقدینگی</h3>
+        <p>PDH/PDL · PWH/PWL · سقف و کف برابر با قاعدهٔ تفکیک · BSL/SSL · نقدینگی سشن، رنج و خط روند · سطوح IPDA (سقف و کف ۲۰/۴۰/۶۰ روزه) · جارو / شکار استاپ / Judas با شرط فتیله + بستهٔ برگشتی.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#7d5bd4"></span>نواحی و ناکارآمدی</h3>
+        <p>FVG در پنج نوع (Standard، Inverted، Implied، Micro، Volume Imbalance) با خط Consequent Encroachment · اردربلاک (صعودی/نزولی، Extreme، Internal/External، Core/Standalone) · Breaker با Sweep اجباری و ریتست در کندل جدا · Mitigation Block · Rejection Block · عرضه و تقاضا (RBR/DBR/RBD/DBD) با امتیاز قدرت ناحیه.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#d4a017"></span>زمان‌بندی و کانتکست</h3>
+        <p>سشن‌های به وقت نیویورک · رنج آسیا · کیل‌زون لندن و نیویورک · پنجره‌های Silver Bullet با وضعیت هم‌سویی HTF · Quarterly Theory با True Day/Week Open · AMD هم به‌صورت نگاشت سشنی و هم مرحلهٔ اندازه‌گیری‌شدهٔ قیمت.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#c0392b"></span>کانتکست اندازه‌گیری</h3>
+        <p>Premium/Discount روی فیبوی ۵۰٪ · ناحیهٔ OTE (۰٫۶۲ تا ۰٫۷۹ با پنجرهٔ طلایی ۰٫۷۰۵) · رجیستری PD-Array / POI با امتیاز کیفیت و امتیاز Nested Mitigation · ردیابی لگ معامله‌گری («طلا تا کجا رفت»).</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#7d5bd4"></span>موتور مکتب‌ها</h3>
+        <p>وایکاف (SC/BC/AR/ST و Spring/Upthrust/SOS/SOW/LPS با فازهای A تا E) · Market Profile (POC، Value Area، HVN/LVN، IB، TPO، Naked POC، نوع روز و نوع باز شدن) · ال‌بروکس (کندل روند، سیگنال، ورود، H1–H4 / L1–L4، Always-In، ۲۰ EMA، رنج با مغناطیس ۵۰٪، Measured Move، شیب کانال) · RTM · امتیاز Smart Money Reversal.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#2f9e6f"></span>نوار ریسک برگشت</h3>
+        <p>یک نوار تک‌خطی روی چارت: نزدیک‌ترین سطح، نوع و وضعیتش، فاصله بر حسب ATR، پیشرفت لگ، و امتیاز مستند ریسک برگشت — تا بدون باز کردن فایل CSV بدانی کجا ایستاده‌ای.</p>
+      </div>
+      <div class="card">
+        <h3><span class="dot" style="background:#d4a017"></span>حالت آموزش</h3>
+        <p>کلیک روی هر آبجکت: پنل مفهوم را توضیح می‌دهد، قاعدهٔ دقیقی که آن را ساخته، شرط ابطالش، و روش بازمحاسبهٔ دستی عدد روی چارت خودت.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="schools">
+    <h2>چرا با دیگر اندیکاتورها فرق دارد</h2>
+    <p class="sub">تفاوت‌ها ادعا نیستند؛ هر کدام در مخزن قابل بازبینی‌اند.</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>اندیکاتورهای معمول SMC</th><th>این ابزار</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>یک خط می‌کشد و دلیلی نمی‌گوید</td><td><strong>هر آبجکت پنل توضیح دارد</strong> — قاعده‌ای که آن را ساخت و شرط ابطالش</td></tr>
+          <tr><td>با هر تیک دوباره حساب می‌کند و ری‌پینت دارد</td><td>تحلیل فقط روی <strong>کندل بسته</strong>؛ پیوت پیش از انتشار تأیید می‌شود</td></tr>
+          <tr><td>یک مدل سراسری روی همهٔ تایم‌فریم‌ها</td><td><strong>هر تایم‌فریم مستقل</strong> — رجیستری و رسم خودش را دارد</td></tr>
+          <tr><td>شلوغی که تا ابد جمع می‌شود</td><td>سقف رجیستری، انقضای FIFO، و <strong>حذف خودکار</strong> تاریخچهٔ باطل‌شده</td></tr>
+          <tr><td>ادعاهای مبهم</td><td>هر تعریف عملیاتی مستند است و <strong>۲۰ ابزار اعتبارسنجی</strong> قاعده را قفل می‌کنند</td></tr>
+          <tr><td>هیچ شاهدی برای «عدد درست است»</td><td>آزمون رفتاری روی <strong>کندل ساختگی</strong> که توابع واقعی تشخیص را صدا می‌زند و خروجی عددی را با بازمحاسبهٔ مستقل مقایسه می‌کند</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="install">
+    <h2>نصب در چهار قدم</h2>
+    <ol class="steps">
+      <li><strong>دانلود.</strong> از صفحهٔ Release فایل <code>ICT_Assistant_Canonical_v0_1.ex5</code> را بگیر و در پوشهٔ <code>MQL5\Indicators\</code> ترمینالت بگذار. (خواستی خودت کامپایل کنی، بستهٔ سورس هم همان‌جاست.)</li>
+      <li><strong>رفرش ترمینال.</strong> در پنجرهٔ Navigator راست‌کلیک کن و <strong>Refresh</strong> بزن.</li>
+      <li><strong>کشیدن روی چارت.</strong> اندیکاتور را روی چارت XAUUSD بینداز (پیش‌فرض‌ها برای طلا تنظیم شده‌اند؛ نمادهای دیگر هم کار می‌کنند).</li>
+      <li><strong>باز کردن پنل توضیح.</strong> روی هر خط یا ناحیه <strong>کلیک کن</strong> (در پروفایل پیش‌فرض) یا با نگه‌داشتن <strong>Ctrl</strong> موس را روی آن ببر. با Esc یا کلیک بعدی بسته می‌شود.</li>
+    </ol>
+    <div class="callout">
+      <strong>نکته:</strong> چارت به‌صورت پیش‌فرض تمیز است. داشبورد خاموش است و به‌جایش یک نوار تک‌خطی ریسک برگشت گوشهٔ چارت می‌آید.
+      اگر جزئیات بیشتری خواستی، <code>InpShowDashboard=true</code>.
+    </div>
+  </section>
+
+  <section id="rules">
+    <h2>پنج قاعده‌ای که این پروژه به آن متعهد است</h2>
+    <div class="grid">
+      <div class="card"><h3>۱. فقط کندل بسته</h3><p>هیچ سیگنالی روی کندل در حال شکل‌گیری نهایی نمی‌شود؛ رویدادهای پیوتی فقط بعد از تأیید سمت راست منتشر می‌شوند.</p></div>
+      <div class="card"><h3>۲. بدون جفت‌شدگی پنهان تایم‌فریم</h3><p>هر تایم‌فریم آبجکت خودش را دارد. کانتکست تایم‌فریم بالاتر به‌عنوان <em>داده</em> خوانده می‌شود، نه به‌عنوان رسم دوباره.</p></div>
+      <div class="card"><h3>۳. دامنهٔ صادقانه</h3><p>دادهٔ واقعی اردرفلو / فوتپرینت / دلتا از فید نیتیو متاتریدر در فارکس در دسترس نیست. خانوادهٔ پروفایل حجم صریحاً «تقریب تیک‌ولوم» برچسب خورده است.</p></div>
+      <div class="card"><h3>۴. تعریف عملیاتی مستند</h3><p>هر جا یک مکتب تعریف‌های رقیب دارد (مثل Smart Money Reversal)، قاعدهٔ دقیق استفاده‌شده نوشته و با اعتبارسنج قفل می‌شود.</p></div>
+      <div class="card"><h3>۵. انقضا به‌جای شلوغی</h3><p>آبجکت‌های باطل‌شده حذف می‌شوند، روی هم تلنبار نمی‌شوند. سقف‌های نمایش FIFO است تا تاریخچه وسط سشن بی‌صدا ناپدید نشود.</p></div>
+    </div>
+
+    <h2 style="margin-top:44px">محدودیت‌های صادقانه</h2>
+    <div class="tbl-wrap">
+      <table>
+        <tbody>
+          <tr><td><strong>فاصلهٔ استاپ</strong></td><td>فعلاً یک بافر ثابت است، ATR‑آگاه نیست و <code>SYMBOL_TRADE_STOPS_LEVEL</code> را در نظر نمی‌گیرد.</td></tr>
+          <tr><td><strong>معیارهای حجمی</strong></td><td>خانوادهٔ پروفایل حجم و «تلاش در برابر نتیجه» روی <strong>تیک‌ولوم</strong> کار می‌کنند، نه حجم واقعی معامله‌شده.</td></tr>
+          <tr><td><strong>امتیاز ریسک برگشت</strong></td><td>مجموع وزن‌دار شواهد است، نه احتمال کالیبره‌شده. نرخ برخورد واقعی هر سطح به جمع‌آوری داده در زمان اجرا نیاز دارد (ابزارش هست، دادهٔ تاریخی نه).</td></tr>
+          <tr><td><strong>ربات نیست</strong></td><td>سفارش نمی‌گذارد و مدیریت نمی‌کند. توصیهٔ مالی هم نیست.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="faq">
+    <h2>پرسش‌های پرتکرار</h2>
+    <details><summary>چارت شلوغ شد؛ چه کنم؟</summary><p>هر خانواده کلید رسم مستقل دارد. پیش‌فرض‌ها عمداً «ضروری‌ها روشن، تزئینات خاموش» هستند. اگر باز هم شلوغ بود، <code>InpMaxDrawnZones</code> و <code>InpMaxDrawnLevels</code> را کم کن یا لایهٔ نقدینگی/برچسب‌های وایکاف را خاموش کن. کشف با خاموش‌کردن رسم متوقف نمی‌شود.</p></details>
+    <details><summary>آیا هر تایم‌فریم برای خودش کار می‌کند؟</summary><p>بله. هر چارت رجیستری، رسم و چرخهٔ عمر خودش را دارد. تایم‌فریم بالاتر فقط به‌عنوان دادهٔ کانتکست خوانده می‌شود و چیزی روی چارت جاری بازنویسی نمی‌کند.</p></details>
+    <details><summary>روی چند تایم‌فریم همزمان می‌توانم بگذارم؟</summary><p>بله. چون بار سنگین تحلیل یک‌بار در هر کندل بسته اجرا می‌شود (نه در هر تیک) و رجیستری‌ها سقف دارند، روی M1 هم قابل استفاده است.</p></details>
+    <details><summary>پنل توضیح چرا فارسی را درست نشان می‌دهد؟</summary><p>متاتریدر هیچ پشتیبانی بومی برای راست‌به‌چپ ندارد و چپ‌چین می‌کند. این پروژه یک لایهٔ رندر فارسی اختصاصی دارد که ترتیب حروف و اتصال آن‌ها را خودش می‌چیند، متن را در چند خط می‌شکند و جهت را حفظ می‌کند.</p></details>
+    <details><summary>چطور بفهمم محاسبات درست است؟</summary><p>سه راه داری: (۱) پنل توضیح روش بازبینی دستی عدد را می‌گوید؛ (۲) ۲۰ ابزار اعتبارسنجی قاعده‌ها را قفل می‌کنند؛ (۳) یک آزمون رفتاری با ۲۵ سناریو روی کندل ساختگی، خودِ توابع تشخیص را اجرا می‌کند و اعداد را با بازمحاسبهٔ مستقل مقایسه می‌کند. هر سه در مخزن قابل اجرا هستند.</p></details>
+    <details><summary>مشارکت در پروژه چطور است؟</summary><p>Issue و Pull Request باز است. فقط تغییرات باید با قاعدهٔ «کندل بسته / بدون ری‌پینت» سازگار باشند و ابزارهای اعتبارسنجی مربوطه را سبز نگه دارند.</p></details>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>© <span class="mono">2026</span> خالق صالحی — مجوز MIT</span>
+      <span><a href="https://github.com/khalegh2131/ICT_indicator" target="_blank" rel="noopener">مخزن</a> · <a href="guide.html">راهنمای فارسی</a> · <a href="https://github.com/khalegh2131/ICT_indicator/releases/latest" target="_blank" rel="noopener">نسخه‌ها</a></span>
+    </div>
+    <p class="disc">
+      MetaTrader 5 و MetaEditor علامت‌های تجاری MetaQuotes Software Corp هستند؛ این پروژه وابسته به MetaQuotes نیست و تأیید آن را ندارد.
+      اشاره به مکتب‌های معامله‌گری تنها برای شناسایی آموزشی مفاهیم عمومی است.
+      <br>
+      این نرم‌افزار فقط برای اهداف آموزشی و تحلیلی ارائه شده و توصیهٔ مالی نیست. معاملهٔ مارجین ریسک بالایی دارد و ممکن است برای همه مناسب نباشد.
+      عملکرد گذشته هیچ اندیکاتور یا استراتژی نشانهٔ نتیجهٔ آینده نیست. مسئولیت هر زیان مالی بر عهدهٔ کاربر است — ابتدا روی حساب دمو آزمایش کن و هرگز سرمایه‌ای را که توان از دست دادنش را نداری ریسک نکن.
+    </p>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var DATA = {
+    sweepbsl: {
+      kind: "جاروی نقدینگی (Sweep)", tone: "gold",
+      what: "یک کندل با فتیلهٔ بالای سقف شناخته‌شده، ولی بسته‌شده زیر همان سقف.",
+      why: "نقدینگی فروش در سقف جمع شده بود (استاپ فروشندگان و سفارش سفارش‌گذاران). بازار برای پر کردن سفارش خرید بزرگ، قیمت را بالای سقف فرستاد و همان‌جا فروخت.",
+      ok: "فتیله واقعاً فراتر رفت، بستهٔ کندل زیر سطح برگشت، و سطح از حالت «تازه» به «جاروشده» تغییر کرد.",
+      no: "اگر کندل بالای همان سقف بسته شود، این جارو نیست؛ شکست است نه شکار.",
+      check: "سقف را ببین، فتیله را با آن مقایسه کن، بعد به قیمت بستهٔ همان کندل نگاه کن. سه عدد کافی است."
+    },
+    eql: {
+      kind: "کف‌های برابر — نقدینگی فروش", tone: "green",
+      what: "دو یا چند کف تقریباً هم‌تراز. جایی که معامله‌گران فکر می‌کنند حمایت محکمی است.",
+      why: "هر کف برابر یعنی مجموعه‌ای از استاپ‌ها زیر آن خوابیده. برای طرف مقابل، این یک هدف مشخص است، نه یک دیوار.",
+      ok: "سطح با تحمل نقطه‌ای مشخص ثبت شد و به‌عنوان نقدینگی فروش (SSL) در رجیستری نشست.",
+      no: "اگر یکی از کف‌ها با فاصلهٔ واضح بشکند و قیمت زیر آن بسته شود، سطح مصرف شده و اعتبارش را از دست می‌دهد.",
+      check: "کف دو کندل را روی هم بگذار و اختلاف نقطه‌ای‌شان را با ورودی تحمل همین لایه بسنج."
+    },
+    ob: {
+      kind: "اردربلاک نزولی (عرضه)", tone: "red",
+      what: "آخرین کندل صعودی پیش از یک حرکت نزولی قوی.",
+      why: "آن کندل جایی است که خریداران نتوانستند ادامه دهند و فروشنده با قدرت ورود کرد. ناحیه‌اش به‌عنوان عرضه باقی می‌ماند.",
+      ok: "حرکت پس از آن یک Displacement واقعی بود و ناحیه در شکست ساختار مشارکت داشت (Core)، نه صرفاً یک کندل مخالف بی‌تأیید.",
+      no: "اگر قیمت با بسته شدن واضح از سمت مخالف ناحیه را رد کند، اردربلاک باطل می‌شود. با یک Sweep نقدینگی روی Sweep، به Breaker تبدیل می‌شود.",
+      check: "آخرین کندل مخالف‌رنگ پیش از حرکت را پیدا کن و سقف و کف بدنه‌اش را اندازه بگیر — همان مرزهای ناحیه هستند."
+    },
+    ipda: {
+      kind: "نقدینگی قدیمی بلندمدت (IPDA)", tone: "purple",
+      what: "سقف یا کف ۲۰، ۴۰ یا ۶۰ روز گذشته.",
+      why: "این‌ها سطوحی هستند که استاپ و سفارش در بازهٔ بلندمدت روی آن‌ها جمع شده است؛ مدل‌های تایم‌فریم بالا آن‌ها را به‌عنوان هدف قیمت در نظر می‌گیرند.",
+      ok: "با پنجرهٔ دقیق روزشمار روی دادهٔ خود نماد محاسبه می‌شود، نه با حدس.",
+      no: "با بسته شدن قیمت آن‌سوی سطح، سطح مصرف‌شده علامت می‌خورد و به‌عنوان هدف تازه باقی نمی‌ماند.",
+      check: "تاریخ سطح را از پنل بخوان و ببین آیا واقعاً اکسترمم ۲۰/۴۰/۶۰ روز اخیر است."
+    },
+    sweepssl: {
+      kind: "جاروی نقدینگی کف (SSL)", tone: "green",
+      what: "آینهٔ حالت سقف: فتیلهٔ زیر کف شناخته‌شده، بستهٔ کندل بالای همان کف.",
+      why: "استاپ خریداران زیر کف جمع شده بود. بازار آن‌ها را برداشت و همان‌جا شروع به خرید کرد — الگوی کلاسیک Judas swing در ابتدای سشن.",
+      ok: "با همان شرط سخت: فتیله فراتر + بستهٔ برگشتی. Sweep مستقل از وجود Displacement تشخیص داده می‌شود.",
+      no: "اگر بستهٔ کندل زیر همان کف بیفتد، این شکست است نه جارو.",
+      check: "کف سطح را از پنل بردار، با کم‌ترین قیمت کندل مقایسه کن، بعد قیمت بسته را نگاه کن."
+    }
+  };
+
+  var panel = document.getElementById("panel");
+  var hots  = Array.prototype.slice.call(document.querySelectorAll(".hot"));
+  var cur   = null;
+
+  function tone(name) {
+    return name === "green" ? "#2f9e6f" : name === "red" ? "#c0392b" : name === "purple" ? "#7d5bd4" : "#d4a017";
+  }
+
+  function render(id) {
+    var d = DATA[id];
+    if (!d) { return; }
+    var color = tone(d.tone);
+    panel.innerHTML =
+      '<p class="ptitle" style="color:' + color + '">' + d.kind + '</p>' +
+      '<span class="ptag">اندیکاتور می‌گوید</span>' +
+      '<h4>این چیست؟</h4><p>' + d.what + '</p>' +
+      '<h4>چرا شکل گرفت؟</h4><p>' + d.why + '</p>' +
+      '<h4>چه چیزی تأییدش می‌کند؟</h4><p>' + d.ok + '</p>' +
+      '<h4>چه چیزی باطلش می‌کند؟</h4><p>' + d.no + '</p>' +
+      '<h4>خودت چطور چک کنی؟</h4><p>' + d.check + '</p>' +
+      '<p class="hint">در متاتریدر همین متن با کلیک روی آبجکت باز می‌شود و با Esc بسته می‌شود.</p>';
+  }
+
+  hots.forEach(function (b) {
+    b.addEventListener("click", function () {
+      hots.forEach(function (o) { o.classList.remove("on"); });
+      b.classList.add("on");
+      cur = b.getAttribute("data-h");
+      render(cur);
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
