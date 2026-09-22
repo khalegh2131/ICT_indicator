@@ -19,7 +19,7 @@
 #     diff -u .tmp/before.mq5 .tmp/now.mq5
 #
 #     # 3. only then re-freeze the hash inside Verify-ModuleSplit.ps1,
-#     #    and record the diff in the project's technical notes
+#     #    and record the diff in the project technical notes
 #
 #   Bytes are handled directly: PowerShell text cmdlets normalise line
 #   endings and would corrupt the LF-only, BOM'd source invisibly.
