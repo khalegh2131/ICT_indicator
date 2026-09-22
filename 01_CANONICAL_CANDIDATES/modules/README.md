@@ -91,7 +91,7 @@ SHA256 مرجع واحد کامپایل: `6FDBD7C4DD9A18972077FBCCB25F59F0242647
 powershell -File tools/Verify-ModuleSplit.ps1
 
 # ۲) و اگر می‌خواهی تغییر را با چشم خودت ببینی: منبع پیش از تغییر را از تاریخچه بیرون بکش
-git show 617afb9942cf8aeef70eda2980a745ed330f1182:01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5 > /tmp/before.mq5
+git show f84bc2a3ee6a78f82db1eda33057e39df2c7ad81:01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5 > /tmp/before.mq5
 powershell -File tools/Verify-ModuleSplit.ps1 -ReferencePath /tmp/before.mq5
 #   S10/S11 گزارش می‌دهند «کدام بایت‌ها فرق دارند» — برای بازآرایی خالص: هیچ‌کدام
 ```
