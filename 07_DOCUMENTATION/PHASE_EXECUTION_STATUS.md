@@ -250,12 +250,12 @@ Hovering over any drawn object must explain, in Persian: what the level/zone is,
 
 The earlier `Sync-And-Compile-Canonical.ps1` accepted whatever `.log` it found next to the mirror. With MetaEditor already open, the command-line `/compile` invocation was ignored and the stale log from the previous successful build was read, so a real compile error (`error 199: wrong parameters count` on a single-argument `StringFormat`) was wrongly reported as `0 errors`. The build script now deletes the old log, requires a freshly produced log, requires the `.ex5` to be no older than the source, and prints a warning when MetaEditor is running. Note for operators: MetaEditor deletes the previous `.ex5` when a compile fails, so a missing artifact in the mirror means the last compile did not pass.
 
-## Batch 5: Persian rendering and documentation contract (2026-09-15)
+## Batch 5: Persian rendering and project working rules (2026-09-15)
 
 - Replaced the invalid literal `\\xNNNN` text encoding with real Persian Unicode characters in the canonical source and preserved UTF-8 BOM encoding.
 - Removed the temporary M0/M1/M2/M3 text probe and its codepoint diagnostics from the indicator.
 - Corrected the Persian shaping join condition so right/left joining capability is checked for both neighboring letters instead of treating every next character as connectable.
-- Added the mandatory root documentation contract: read-before-edit, canonical-only changes, no deletion without approval, no guessing or unsupported claims, fresh build evidence, and mandatory status updates.
+- Added a short set of working rules for this project: read-before-edit, canonical-only changes, no deletion without approval, no guessing or unsupported claims, fresh build evidence, and mandatory status updates.
 - Build evidence after this change: `0 errors, 0 warnings`; canonical/package/mirror SHA256 `8CBF3BA37291C2918F1864F671D97A9AFAC7F2D4078505D76F97AB9478DE057B`; artifact timestamp `2026-09-15 22:06:01`.
 - The explanation rows use read-only native `OBJ_EDIT` controls with right alignment and raw Unicode text; the extra separator and visible edit borders are hidden by matching the border color to the panel background. Final MT5 visual confirmation remains pending after reload.
 - **User verification still pending:** remove and re-add the indicator in MT5 so the loaded chart instance uses the new `.ex5`, then confirm Persian readability with a screenshot. No release claim is made until that visual check passes.
