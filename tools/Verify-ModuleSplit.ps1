@@ -178,7 +178,13 @@ param(
    #   - 03_GlobalState: g_pendLineOn / g_pendLastText become g_pendRowCleaned.
    # No condition, arithmetic, registry write or buffer index of any earlier
    # feature was changed; no object name was renamed.
-   [string]$ExpectedSha256 = "7BB650EF46BB0307CFACC1E6C5005C6D2A7D5FB710E0057C88D676A7A853E6C2",
+   # Re-frozen 2026-09-22 (release v1.01): the program version property became
+   # "1.01" so the published artifact matches the release tag. Justified by an
+   # external diff against the phase-48 baseline bytes
+   # (05_TESTS_AND_VALIDATION/frozen/assembled_7BB650EF.mq5), which contains
+   # exactly ONE hunk: the #property version line in the shell header. No module
+   # byte changed, so no analysis, display or evidence rule moved.
+   [string]$ExpectedSha256 = "A24B066B47888C3B6AEF30E498E84338148C0C37A73C35FA83260419478DD649",
    [int]$ExpectedModules = 32,
    [int]$ExpectedPreIncludeLines = 32,
    [int]$ExpectedLines = 12991,

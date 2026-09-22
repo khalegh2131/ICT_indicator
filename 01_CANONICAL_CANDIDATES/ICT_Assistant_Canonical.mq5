@@ -22,7 +22,7 @@
 #property copyright   "Khaleq Salehi — khaleq.sa@gmail.com — +989120143697"
 #property link        "mailto:khaleq.sa@gmail.com"
 #property description "ICT · SMC · MMM · Wyckoff · S&D · AMT · RTM · Brooks — اندیکاتور آموزشی و تحلیلی چند مکتبی: رسم روی چارت همراه با توضیح فارسی کامل زیر موس. نویسنده: خالق صالحی"
-#property version   "1.00"            // MQL5 rejects a 0.x major (compiler warning 68) → canonical core v0.1 is published as program version 1.00
+#property version   "1.01"            // MQL5 rejects a 0.x major (compiler warning 68) → the canonical core v0.1 is published as program version 1.01 (release v1.01: 32 family modules, fitted grade, single path row)
 #property indicator_chart_window
 #property indicator_buffers 0
 #property indicator_plots   0

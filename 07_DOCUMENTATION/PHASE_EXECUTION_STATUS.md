@@ -1306,7 +1306,7 @@ Validate-Phase37 (جدید): PASS=21 FAIL=0 PENDING=1  ← بخش B منتظر �
 | دروازه | نتیجه |
 |---|---|
 | Build | **0 errors, 0 warnings** — `…\khaleq\newICT\ICT_Assistant_Canonical_v0_1.ex5` (۲۰۲۶‑۰۹‑۲۲ ۰۶:۵۳:۰۲) |
-| `Verify-ModuleSplit` | OK — `7BB650EF…` ، ۱۲٬۹۹۱ خط، ۳۲ ماژول؛ بازتنظیم هش **ششم** با diff بیرونی ۳۰ هانکی |
+| `Verify-ModuleSplit` | OK — `A24B066B…` ، ۱۲٬۹۹۱ خط، ۳۲ ماژول؛ بازتنظیم هش **ششم** با diff بیرونی ۳۰ هانکی (فاز ۴۸) و سپس یک هانک تک‌خطی برای نسخهٔ `1.01` در زمان انتشار |
 | `Validate-Phase48` (تازه) | **PASS=17 FAIL=0 PENDING=0** |
 | `Validate-Phase35` · `Phase44` · `Phase47` | ۲۵/۰ · ۲۳/۰ · ۲۱/۰ (به ساختار ردیف ادغام‌شده به‌روز شدند) |
 | رگرسیون | **۲۶ ابزار، صفر شکست** (۲۴ مورد تا reload به‌درستی PENDING است) |
