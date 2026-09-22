@@ -184,10 +184,18 @@ param(
    # (05_TESTS_AND_VALIDATION/frozen/assembled_7BB650EF.mq5), which contains
    # exactly ONE hunk: the #property version line in the shell header. No module
    # byte changed, so no analysis, display or evidence rule moved.
-   [string]$ExpectedSha256 = "A24B066B47888C3B6AEF30E498E84338148C0C37A73C35FA83260419478DD649",
-   [int]$ExpectedModules = 32,
+   # Re-frozen 2026-09-22 (phase 49): the symbol profile — the point floors became
+   # grid-normalised (PointFloorPrice) and the signal grade became per-symbol
+   # calibratable. Justified by an external diff of the STRIPPED translation unit
+   # against the release-v1.01 baseline
+   # (05_TESTS_AND_VALIDATION/frozen/assembled_A24B066B.mq5): the removed lines are
+   # exactly the five old point-floor call sites, the F5/F6 one-liners, the four
+   # threshold literals and the strip's grade fragment. No condition, arithmetic,
+   # registry write, buffer index or object name of any earlier feature changed.
+   [string]$ExpectedSha256 = "6FDBD7C4DD9A18972077FBCCB25F59F0242647617C386B65722152584728C93C",
+   [int]$ExpectedModules = 33,
    [int]$ExpectedPreIncludeLines = 32,
-   [int]$ExpectedLines = 12991,
+   [int]$ExpectedLines = 13388,
    # Write the assembled baseline next to the tests so a later phase can diff
    # against real bytes: -Freeze  (no effect on the checks above)
    [switch]$Freeze,

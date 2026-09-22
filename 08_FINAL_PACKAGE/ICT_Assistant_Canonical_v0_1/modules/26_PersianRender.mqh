@@ -1666,6 +1666,15 @@ void ExplainRiskStripObject()
    ExpAddWrapped("درجه چطور ساخته شد: مجموع هفت شاهد سنجیده‌شده روی کندل بسته (خانوادهٔ نزدیک‌ترین سطح، فاصله تا آن سطح، جای قیمت در لگ، فاصله تا هدف نقدینگی، همسویی تایم‌فریم‌ها، جاروی نقدینگی، وضعیت فرسودگی)", clrAqua);
    ExpAdd(StringFormat("why: %s", g_gradeWhy), clrAqua);
    ExpAddWrapped("معنی عدد برد: درصدی که همین درجه در گذشتهٔ ثبت‌شدهٔ همین نماد به هدف رسیده؛ یک اندازه‌گیری است، نه وعده — و تعداد نمونه‌اش کنارش نوشته می‌شود", clrSilver);
+   // فاز ۴۹: دو ردیف صادقانه — پروفایل همین نماد، و اینکه عدد نمایش‌داده‌شده
+   // آیا از دادهٔ همین نماد است یا از جدول مرجع نماد دیگری.
+   ExpAdd(StringFormat("symbol: %s | class: %s | base: %s | digits: %d | point: %s",
+           _Symbol, SymbolClassCodeStr(), SymbolBaseName(),
+           (int)SymbolInfoInteger(_Symbol,SYMBOL_DIGITS), DoubleToString(_Point,8)), clrAqua);
+   ExpAdd(StringFormat("point scale: %.2f | pip: %s | ref symbol: %s",
+           SymbolPointScale(), DoubleToString(SymbolPipPrice(),8), GradeRefSymbolBase()), clrAqua);
+   ExpAddWrapped("نماد این چارت: "+SymbolClassFa()+" — "+GradeSourceFa(), clrAqua);
+   ExpAddWrapped("چرا مهم است: روی جفت‌ارز ۲/۴ رقمی، یک پوینت ۱۰ برابر بزرگ‌تر است؛ پس کف‌های پوینتی (تلورانس هم‌سطح‌ها و بافر حد ضرر) خودکار روی شبکهٔ مرجع تبدیل می‌شوند تا روی هر نماد همان معنی را بدهند", clrSilver);
    ExpAddWrapped("رنگ نوار: سبز = درجهٔ بالا، طلایی = متوسط، خاکستری = درجهٔ پایین؛ رنگ دربارهٔ کیفیت هم‌جهتی حرف می‌زند، نه دربارهٔ جهت", clrSilver);
    ExpAdd(StringFormat("family: %s", g_gradeFam), clrSilver);
    ExpAddWrapped("چطور خودت بسنجی: با ابزار سنجش همین مخزن، درجه و برد را از فایل ریسک برگشت بازتولید کن؛ اگر با هم نخواند، حساب غلط است", clrAqua);

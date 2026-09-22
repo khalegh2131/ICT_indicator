@@ -9,7 +9,7 @@ long AddLiquidity(ENUM_LIQ_TYPE type, ENUM_LIQ_SCOPE scope, double price, dateti
    {
       if(g_liquidity[i].type==type && g_liquidity[i].isHTF==isHTF &&
          g_liquidity[i].time==t &&
-         MathAbs(g_liquidity[i].price-price) < PointsToPrice(InpEQ_Tolerance_Points))
+         MathAbs(g_liquidity[i].price-price) < PointFloorPrice(InpEQ_Tolerance_Points))
          return g_liquidity[i].id;
    }
    LiquidityObj o;
@@ -151,7 +151,9 @@ void DetectEQ_FromSwings(SwingPoint &swings[], double atrValue)
    if(n<2) return;
    // تلورانس EQ باید با نوسان بازار مقیاس بخورد، نه پوینت ثابت؛ ۱۵ پوینت روی
    // XAUUSD پرمومنت تقریباً صفر است و روی جفت‌ارز آرام بیش‌ازحد (#۱۴).
-   double tol = PointsToPrice(InpEQ_Tolerance_Points);
+   // فاز ۴۹: «پوینت» روی شبکهٔ مرجع تفسیر می‌شود تا روی جفت‌ارز ۲/۴ رقمی
+   // ۱۰ برابر گشادتر نشود (PointFloorPrice). روی طلا همان مقدار قبلی است.
+   double tol = PointFloorPrice(InpEQ_Tolerance_Points);
    if(atrValue>0.0 && InpEQ_ToleranceATR>0.0)
       tol = MathMax(tol, atrValue*InpEQ_ToleranceATR);
 

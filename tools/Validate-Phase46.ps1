@@ -94,9 +94,12 @@ Check 'grade-columns-are-declared-in-the-evidence-header' `
 Check 'grade-fields-are-written' `
       (($code -match 'g_gradeFam,') -and ($code -match 'DoubleToString\(g_gradeScore,3\),') -and ($code -match 'g_gradeN,?\s*\r?\n?\s*ChartTfCode\(\)\)')) `
       'the row writes the family code, the fitted score and the sample count (phase 47 appended one more column after them)'
+# Phase 49: the strip still OPENS with the grade - the format string's first field
+# is %s and its first argument is GradeTag(). GradeTag() is what refuses to present
+# a reference win% as if it had been measured on the current symbol.
 Check 'grade-leads-the-strip' `
-      ($code -match 'string txt=StringFormat\("GRADE: %s') `
-      'GRADE opens the corner strip (Latin-led labels first, Persian after)'
+      ($code -match 'string txt=StringFormat\("%s[\s\S]{0,120}?BIAS: %s[\s\S]{0,240}?GradeTag\(\)') `
+      'the corner strip opens with the graded fragment (GradeTag), then bias (Latin-led labels first, Persian after)'
 Check 'strip-width-follows-the-text' `
       ($code -match 'int need=\(int\)\(StringLen\(txt\)\*InpExplainFontSize\*0\.62\)\+24;') `
       'the strip is no longer clipped at a fixed 640 px: its width is derived from the row length'
@@ -112,8 +115,16 @@ foreach ($fn in 'GradeLiftF1','GradeLiftF2','GradeLiftF3','GradeLiftF4','GradeLi
    $bodies[$fn] = Get-Body $code ('double ' + $fn + '(')
 }
 $featOf = @{ F1 = 'GradeLiftF1'; F2 = 'GradeLiftF2'; F3 = 'GradeLiftF3'; F4 = 'GradeLiftF4'; F7 = 'GradeLiftF7' }
-$m5 = [regex]::Match($code, 'double GradeLiftF5\(bool aligned\)\s*\{\s*return aligned\?\s*(-?[0-9.]+)\s*:\s*(-?[0-9.]+);')
-$m6 = [regex]::Match($code, 'double GradeLiftF6\(bool swept\)\s*\{\s*return swept\?\s*(-?[0-9.]+)\s*:\s*(-?[0-9.]+);')
+# Phase 49: each lift now begins with a calibration lookup, so the reference literal
+# is the SECOND statement. The window is bounded so the match cannot run into the
+# next function and read its numbers instead (which would pass a broken table).
+$m5 = [regex]::Match($code, 'double GradeLiftF5\(bool aligned\)[\s\S]{0,260}?return aligned\?\s*(-?[0-9.]+)\s*:\s*(-?[0-9.]+);')
+$m6 = [regex]::Match($code, 'double GradeLiftF6\(bool swept\)[\s\S]{0,260}?return swept\?\s*(-?[0-9.]+)\s*:\s*(-?[0-9.]+);')
+# ...and the lookup itself must be present and gated on the loaded calibration.
+Check 'lifts-prefer-the-per-symbol-file' `
+      (($code -match '"lift\.f5\.mtf"\+') -and ($code -match '"lift\.f6\.swept"\+') -and
+       ($code -match 'if\(g_calLoaded\) return CalGet\("lift\.f1\."\+f, 0\.0\);')) `
+      'every lift asks the fitted per-symbol table first, and only then the frozen reference literals'
 
 $bad = @(); $checked = 0
 foreach ($ln in $fixLines) {
@@ -196,11 +207,22 @@ foreach ($ln in $fixLines) {
    elseif ($p[0] -eq 'grade') { [void]$grades.Add([pscustomobject]@{ G = $p[1]; Win = Num $p[2]; N = [int]$p[3] }) }
    elseif ($p[0] -eq 'baseline') { $baseline = Num $p[2] }
 }
+# Phase 49: the boundary is now a variable (tAplus/tA/tBplus/tB) whose value is
+# either the fitted file or the reference default. So the lock is tighter than
+# before: the DEFAULT inside CalGet must equal the fixture, and the two sides of
+# the ternary must agree, otherwise a fitted file and the fallback would disagree.
 $badT = @()
+$varOf = @{ 'A+' = 'tAplus'; 'A' = 'tA'; 'B+' = 'tBplus'; 'B' = 'tB' }
+$keyOf = @{ 'A+' = 'aplus'; 'A' = 'a'; 'B+' = 'bplus'; 'B' = 'b' }
 foreach ($g in 'A+','A','B+','B') {
    $wantTxt = $tbl[$g].ToString('0.###', [System.Globalization.CultureInfo]::InvariantCulture)
-   $m = [regex]::Match($code, ('if\(s>=' + [regex]::Escape($wantTxt) + '\) return "' + [regex]::Escape($g) + '";'))
-   if (-not $m.Success) { $badT += ($g + ' threshold ' + $wantTxt) }
+   $m = [regex]::Match($code, ('double\s+' + $varOf[$g] + '\s*=\s*g_calLoaded\?\s*CalGet\("thr\.' + $keyOf[$g] + '",\s*(-?[0-9.]+)\s*\)\s*:\s*(-?[0-9.]+);'))
+   if (-not $m.Success) { $badT += ($g + ' threshold variable ' + $wantTxt); continue }
+   $inFile = Num $m.Groups[1].Value; $fallback = Num $m.Groups[2].Value
+   if ([math]::Abs($inFile - $tbl[$g]) -gt 0.0005) { $badT += ('{0} file default {1} vs fixture {2}' -f $g, $inFile, $tbl[$g]) }
+   if ([math]::Abs($fallback - $inFile) -gt 0.0000005) { $badT += ('{0} ternary disagrees: {1} vs {2}' -f $g, $fallback, $inFile) }
+   $m2 = [regex]::Match($code, ('if\(s>=' + [regex]::Escape($varOf[$g]) + '\)\s*return "' + [regex]::Escape($g) + '";'))
+   if (-not $m2.Success) { $badT += ($g + ' comparison does not use ' + $varOf[$g]) }
 }
 Check 'grade-thresholds-match-the-fitted-quantiles' ($badT.Count -eq 0) ("checked 4 thresholds; missing: " + ($badT -join ', '))
 
@@ -229,10 +251,13 @@ Check 'measured-win-decreases-monotonically-from-A-plus-to-C' ($mono -and ($winS
       ("sequence = " + ($winSeq -join ' > ') + ' > ' + $cWin)
 Check 'top-grade-sits-clearly-above-the-baseline' (($winSeq[0] - $baseline) -ge 15.0) `
       ("A+ {0}% vs baseline {1}% (delta {2})" -f $winSeq[0], $baseline, [math]::Round($winSeq[0]-$baseline,1))
+$stripIdx = $code.IndexOf('string txt=StringFormat("%s')
+$stripWin = ''
+if ($stripIdx -ge 0) { $stripWin = $code.Substring($stripIdx, [math]::Min(360, $code.Length - $stripIdx)) }
 Check 'grade-now-leads-the-strip-and-the-old-index-follows' `
-      (($code.IndexOf('GRADE: %s') -ge 0) -and ($code.IndexOf('GRADE: %s') -lt $code.IndexOf('BIAS: %s')) -and
+      (($stripIdx -ge 0) -and ($stripWin -match 'GradeTag\(\)') -and ($stripWin -match 'BIAS: %s') -and
        ($code.Contains($wRiskWord))) `
-      'GRADE precedes BIAS in the corner strip, and the uncalibrated risk index is kept only as a secondary field'
+      'the grade leads the corner strip (through GradeTag), and the uncalibrated risk index is kept only as a secondary field'
 
 # ---------------------------------------------------------------------
 # R1) runtime agreement (PENDING until the chart is reloaded)

@@ -87,8 +87,12 @@ string GradeExhKey()
 // --- جدول لیفت‌ها (سنجیده‌شده؛ منبع: tools/Fit-SignalGrade.ps1)
 // ورودی هر تابع، کلید سطل است؛ سطل‌هایی که نمونه‌شان زیر کف بود صفر می‌مانند
 // و همین صفر بودن هم مستند است (نه حدس).
+// فاز ۴۹: اگر فایل کالیبراسیون همین نماد/تایم‌فریم بار شده باشد، عددها از آن
+// می‌آید و جدول ثابت زیر فقط نقش «مرجع» را دارد. کلیدها با ابزار
+// tools/Fit-SignalGrade.ps1 (-EmitCalib) نوشته می‌شوند، پس منبع عدد قابل بازتولید است.
 double GradeLiftF1(string f)
 {
+   if(g_calLoaded) return CalGet("lift.f1."+f, 0.0);
    if(f=="famBREAKER") return  0.489;
    if(f=="famFVGVI")   return  0.277;
    if(f=="famLIQ")     return  0.252;
@@ -99,6 +103,7 @@ double GradeLiftF1(string f)
 }
 double GradeLiftF2(string b)
 {
+   if(g_calLoaded) return CalGet("lift.f2."+b, 0.0);
    if(b=="distLt025")   return -0.040;
    if(b=="dist025to05") return  0.294;
    if(b=="dist05to1")   return  0.490;
@@ -107,6 +112,7 @@ double GradeLiftF2(string b)
 }
 double GradeLiftF3(string b)
 {
+   if(g_calLoaded) return CalGet("lift.f3."+b, 0.0);
    if(b=="legLt50")   return  0.003;
    if(b=="leg50to85") return  0.677;
    if(b=="legGte85")  return -0.028;
@@ -114,14 +120,26 @@ double GradeLiftF3(string b)
 }
 double GradeLiftF4(string b)
 {
+   if(g_calLoaded) return CalGet("lift.f4."+b, 0.0);
    if(b=="dolNone") return -0.223;
    if(b=="dolGt1")  return  0.003;
    return 0.0;                    // dolLe05 / dol05to1: نمونه کمتر از کف
 }
-double GradeLiftF5(bool aligned) { return aligned? 0.110 : -0.033; }
-double GradeLiftF6(bool swept)   { return swept? 0.032 : -0.001; }
+// کلید با ابزار فیت یکی است: آنجا کلید دو شرطی «mtf»+مقدار و «swept»+مقدار
+// ساخته می‌شود (مقداری که در CSV نوشته می‌شود)، پس اینجا هم همان پیشوند می‌آید.
+double GradeLiftF5(bool aligned)
+{
+   if(g_calLoaded) return CalGet("lift.f5.mtf"+(aligned?"true":"false"), 0.0);
+   return aligned? 0.110 : -0.033;
+}
+double GradeLiftF6(bool swept)
+{
+   if(g_calLoaded) return CalGet("lift.f6.swept"+(swept?"true":"false"), 0.0);
+   return swept? 0.032 : -0.001;
+}
 double GradeLiftF7(string e)
 {
+   if(g_calLoaded) return CalGet("lift.f7."+e, 0.0);
    if(e=="exhREVERSAL_CONFIRMED")         return  0.598;
    if(e=="exhRANGE_OR_TRANSITION")        return  0.112;
    if(e=="exhEXHAUSTION_WATCH")           return  0.046;
@@ -135,30 +153,59 @@ double GradeLiftF7(string e)
 // --- آستانه‌ها: چارک‌های همان توزیع سنجیده‌شده (بازتولید با همان ابزار)
 string GradeFromScore(double s)
 {
-   if(s>=0.827) return "A+";
-   if(s>=0.564) return "A";
-   if(s>=0.297) return "B+";
-   if(s>=0.106) return "B";
+   double tAplus = g_calLoaded? CalGet("thr.aplus",0.827) : 0.827;
+   double tA     = g_calLoaded? CalGet("thr.a",    0.564) : 0.564;
+   double tBplus = g_calLoaded? CalGet("thr.bplus",0.297) : 0.297;
+   double tB     = g_calLoaded? CalGet("thr.b",    0.106) : 0.106;
+   if(s>=tAplus) return "A+";
+   if(s>=tA)     return "A";
+   if(s>=tBplus) return "B+";
+   if(s>=tB)     return "B";
    return "C";
 }
 // نرخ بردِ همان درجه — عدد ثابت نیست: از همان سنجش می‌آید و در پنل با n
 // نشان داده می‌شود تا کاربر بداند این یک وعده نیست، یک اندازه‌گیری است.
+// فاز ۴۹: هر عدد کالیبراسیون کلید خودش را دارد (win.aplus … win.c و n.aplus … n.c)
+// تا وقتی فایل نماد موجود باشد، **هیچ عددی از جدول مرجع روی نماد دیگر نمایش داده نشود**.
+string CalKeyOf(string g)
+{
+   if(g=="A+") return "aplus";
+   if(g=="A")  return "a";
+   if(g=="B+") return "bplus";
+   if(g=="B")  return "b";
+   if(g=="C")  return "c";
+   return "";
+}
 double GradeMeasuredWin(string g)
 {
+   string k=CalKeyOf(g);
+   if(g_calLoaded && StringLen(k)>0) return CalGet("win."+k, 0.0);
    if(g=="A+") return 52.2;
    if(g=="A")  return 41.2;
    if(g=="B+") return 35.5;
    if(g=="B")  return 31.2;
    if(g=="C")  return 25.8;
-   return 29.4;
+   return GradeMeasuredWinRef();
 }
 int GradeMeasuredN(string g)
 {
+   string k=CalKeyOf(g);
+   if(g_calLoaded && StringLen(k)>0) return (int)CalGet("n."+k, 0.0);
    if(g=="A+") return   92;
    if(g=="A")  return  306;
    if(g=="B+") return  707;
    if(g=="B")  return 1115;
    if(g=="C")  return 3299;
+   return GradeMeasuredNRef();
+}
+double GradeMeasuredWinRef()
+{
+   if(g_calLoaded) return CalGet("basewin", 29.4);
+   return 29.4;
+}
+int GradeMeasuredNRef()
+{
+   if(g_calLoaded) return (int)CalGet("basen", 5519);
    return 5519;
 }
 string GradeFa(string g)
@@ -170,6 +217,18 @@ string GradeFa(string g)
    if(g=="B")  return "هم‌جهتی ضعیف";
    if(g=="C")  return "هم‌جهتی ضعیف یا مخالف شواهد";
    return "تعیین نشده";
+}
+
+// --- فاز ۴۹: متن صادقانهٔ درجه. اگر نماد کالیبره نباشد، نرخ مرجع **به نام
+// نماد مرجع** می‌آید تا با اندازه‌گیری همین نماد قاطی نشود؛ و اگر کاربر خواسته
+// باشد، درجه کلاً نمایش داده نمی‌شود.
+string GradeTag()
+{
+   if(g_grade=="—") return "GRADE: —";
+   if(GradeCalibrated())
+      return StringFormat("GRADE: %s  %.1f%%", g_grade, g_gradeWin);
+   if(InpGradeUncalibrated==GRUNC_SUPPRESS) return "GRADE: —";
+   return StringFormat("GRADE: %s (مرجع %s: %.1f%%)", g_grade, GradeRefSymbolBase(), g_gradeWin);
 }
 
 // رنگ نوار: چون سرِ ردیف حالا درجه است، رنگ هم درجه را می‌گوید (کیفیت

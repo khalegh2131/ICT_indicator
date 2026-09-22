@@ -401,7 +401,8 @@ void UpdateSetup(double curClose, double atrValue, datetime barTime)
    double stopsPrice=(double)stopsPts*_Point;
    g_stopsLevelPrice=stopsPrice;
    double bufAtr=(atrValue>0.0)? atrValue*InpSL_MinATR : 0.0;
-   double bufPts=PointsToPrice((double)InpSL_MinPoints);
+   // فاز ۴۹: کف پوینتی روی شبکهٔ مرجع (روی طلا بی‌تغییر، روی جفت‌ارز ۲/۴ رقمی اصلاح)
+   double bufPts=PointFloorPrice((double)InpSL_MinPoints);
    double buf=MathMax(MathMax(bufPts,bufAtr),stopsPrice);
    if(buf<=0.0) buf=PointsToPrice(10.0);   // SL هرگز روی خود ناحیه نیفتد
    double sl=(g_htfBias==DIR_BULL)? zoneBot-buf : zoneTop+buf;

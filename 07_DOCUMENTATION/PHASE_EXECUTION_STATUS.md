@@ -1315,5 +1315,32 @@ Validate-Phase37 (جدید): PASS=21 FAIL=0 PENDING=1  ← بخش B منتظر �
 
 **حادثهٔ مستندسازی همین فاز:** نوشتن مستندات فنی پروژه با ابزار «جای‌گزینی کل فایل» انجام شد و بخش فازهای ۳۷ تا ۴۷ آن از دست رفت (پرونده در `.git/info/exclude` است و گیت نسخهٔ بازیابی نداشت). آخرین نسخهٔ کامیت‌شده (پایان فاز ۳۶) بازیابی شد و یک یادداشت هشدار + خلاصهٔ قاعده‌های فازهای ۳۷–۴۷ رویش افزوده شد. مرجع کامل همان رویدادها همین فایل است.
 
+---
+
+## فاز ۴۹ — پروفایل نماد (همهٔ نمادها: ماژور و مینور)
+
+**هدف:** دو چیزی که به‌ازای هر نماد عوض می‌شود و تا فاز ۴۸ ثابت گرفته شده بود: واحد «پوینت» و نمادی که جدول درجه رویش کالیبره شده است.
+
+| بخش | تغییر |
+|---|---|
+| ماژول تازه | `33_SymbolProfile.mqh` (۲۸۵ خط) — طبقهٔ نماد، پیپ، `SymbolPointScale()`، `PointFloorPrice()`، بارگذار کالیبراسیون، شاهد `SymbolProfile.csv` |
+| ورودی‌ها | `InpWriteSymbolProfile` · `InpAutoPointScale` · `InpGradeRefSymbol="XAUUSD"` · `InpGradeCalibAuto` · `InpGradeUncalibrated` (enum `GRUNC_LABEL/SUPPRESS`) |
+| کدهای تغییر‌یافته | `01_HeaderAndInputs` · `03_GlobalState` · `08_Lifecycle` · `10_Liquidity` (۲ کف) · `19_SetupEngine` (۱ کف) · `20_SmcMmm` (۲ کف) · `31_SignalGrade` (۷ لیفت + ۴ آستانه + win/n) · `26_PersianRender` · `27_Dashboard` |
+| ضمانت روی طلا | طلا جفت‌ارز نیست ⇒ ضریب ۱٫۰ ⇒ `PointFloorPrice ≡ PointsToPrice`؛ دو گارد پیش از تست رقم |
+| ابزار تازه | `Fit-AllSymbols.ps1` (راننده) + `Validate-Phase49.ps1` (۲۲ چک) |
+| ابزار گسترش‌یافته | `Fit-SignalGrade.ps1`: `-Timeframe` · `-LedgerPath` · `-EmitCalib` + امتناع از نوشتن فایل زیر ۲۰۰ نمونه |
+| فایل کالیبراسیون واقعی | `ICT_Assistant_Canonical_GradeCalib_XAUUSD.csv` — ۵۵۳۱ نمونه، ۴۲ کلید، ASCII/LF، نوشته‌شده در `COMMON\Files` |
+| قفل تازه | نام سطل‌های هر هفت ویژگی از ماژول و ابزار فیت استخراج و به‌عنوان مجموعه مقایسه می‌شود (همین قفل یک ایراد واقعی گرفت: `lift.f5.true` در برابر `mtftrue`) |
+
+| دروازه | نتیجه |
+|---|---|
+| Build | **0 errors, 0 warnings** — `…\khaleq\newICT\ICT_Assistant_Canonical_v0_1.ex5` (۲۰۲۶‑۰۹‑۲۲ ۰۹:۰۶:۱۶)، `Artifact SHA256 = B2FAAFB4…` |
+| `Verify-ModuleSplit` | **PASS=9 FAIL=0** — `6FDBD7C4…` ، ۱۳٬۳۸۸ خط، **۳۳ ماژول**؛ بازتنظیم هش هفتم |
+| diff بیرونی (واحد بی‌رشته) vs v1.01 | ۱۷ هانک؛ خط‌های حذف‌شده فقط پنج کف پوینتی، دو تک‌خطی `GradeLiftF5/F6`، چهار آستانه، قطعهٔ درجهٔ نوار و `return 29.4;` |
+| `Validate-Phase49` (تازه) | **PASS=22 FAIL=0 PENDING=1** |
+| رگرسیون | **۲۷ ابزار، صفر شکست**؛ `Phase37` و `Phase49` تا reload درست‌کارانه PENDING |
+
+**بازمانده:** (۱) کالیبراسیون هر نماد داده می‌خواهد نه کد: `BTCUSD.x` سه‌هزار ردیف دارد ولی نمونهٔ واجد شرط صفر (بایاس تمام دوره `NEUTRAL`)؛ `EURUSD.x` یک ردیف. (۲) فایل طلا روی دفتر `ALL` فیت شده چون دفترهای per-TF طلا ۴–۱۰ ردیف‌اند. (۳) نمادهای اگزوتیک به `OTHER` می‌افتند و ضریب ۱٫۰ می‌گیرند (محافظه‌کارانه). (۴) `InpAutoPointScale=false` رفتار فاز ۴۸ را برمی‌گرداند.
+
 
 

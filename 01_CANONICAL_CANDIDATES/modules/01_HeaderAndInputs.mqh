@@ -12,7 +12,10 @@ input int    InpSwingRight            = 3;            // کندل سمت راس�
 input int    InpMaxSwings             = 300;          // حداکثر Swing نگه‌داری‌شده در حافظه
 
 input group "== Liquidity =="
-input double InpEQ_Tolerance_Points   = 15;           // تلورانس EQH/EQL بر حسب پوینت
+// فاز ۴۹: واحد این ورودی «پوینت روی شبکهٔ مرجع ۵/۳ رقمی» است. روی نماد پیپ‌دار
+// ۲/۴ رقمی به‌طور خودکار با ضریب ۰٫۱ تفسیر می‌شود تا «۱۵ پوینت» همان ۱٫۵ پیپ
+// بماند (روی طلا/شاخص هیچ تغییر نمی‌کند). جزئیات در ماژول ۳۳_SymbolProfile.
+input double InpEQ_Tolerance_Points   = 15;           // تلورانس EQH/EQL (پوینت روی شبکهٔ مرجع — روی جفت‌ارز ۲/۴ رقمی خودکار اصلاح می‌شود)
 input double InpEQ_ToleranceATR        = 0.15;         // کف تلورانس EQH/EQL به نسبت ATR (0=غیرفعال)
 // فاز ۳۰ (#۷۷): «جدایی» بین دو عضو خوشهٔ EQH/EQL.
 // منبع (LuxAlgo — Equal Highs/lows As Liquidity، مرحلهٔ ۲): «Require separation:
@@ -199,7 +202,7 @@ input group "== Phase 10: Dealing Leg / OTE / SL / RR =="
 input double InpMinLegATR              = 1.0;  // حداقل اندازهٔ لگ واقعی نسبت به ATR (کمتر = لگ بی‌ارزش)
 input double InpOTE_Golden             = 0.705;// نقطهٔ طلایی OTE (۷۰٫۵٪ ریتریس لگ)
 input double InpSL_MinATR              = 0.5;  // بافر SL: نسبت به ATR کندل تحلیل
-input int    InpSL_MinPoints           = 20;   // بافر SL: کف مطلق به پوینت
+input int    InpSL_MinPoints           = 20;   // بافر SL: کف مطلق (پوینت روی شبکهٔ مرجع — فاز ۴۹ روی جفت‌ارز ۲/۴ رقمی خودکار اصلاح می‌شود)
 input double InpMinRR                 = 1.5;  // حداقل R:R واقعی (entry→SL در برابر TP3/DOL)
 input int    InpChainLookbackBars      = 96;   // پنجرهٔ تازگی زنجیرهٔ Sweep→Displacement→شکست ساختار
 input double InpDOL_MinRoomATR         = 1.0;  // حداقل فاصلهٔ DOL برای ساختن R:R واقعی
@@ -432,4 +435,21 @@ input bool   InpEnablePendingScenario = true;  // محاسبهٔ سناریوی 
 // فاز ۴۸: ردیف جداگانهٔ «در انتظار» با ردیف درجهٔ سیگنال **ادغام** شد و حالا
 // هر دو در همان یک نوار گوشهٔ چارت دیده می‌شوند. پس سه ورودی چیدمان ردیف
 // (نمایش/ارتفاع/عرض) حذف شدند — چیدمان همان نوار ریسک است (InpRiskStripY/Width).
+
+// --- فاز ۴۹: پروفایل نماد — «همهٔ نمادها، ماژور و مینور» ---
+// دو چیزی که به‌ازای هر نماد عوض می‌شود و تا فاز ۴۸ ثابت گرفته شده بود:
+//   ۱) واحد «پوینت»: روی طلا (۲ رقم) و روی جفت‌ارز ۵ رقمی، یک ورودی پوینتی دو
+//      فاصلهٔ کاملاً متفاوت می‌سازد. روی جفت‌ارز ۴ رقمی هم ۱۰ برابر گشادتر می‌شود.
+//   ۲) کالیبراسیون درجه: جدول لیفت‌های ۳۱_SignalGrade روی دادهٔ یک نماد فیت شده
+//      است؛ نشان‌دادن نرخ‌های آن روی نماد دیگر، عددی است که به آن نماد تعلق ندارد.
+// این ورودی‌ها در **انتهای** لیست اضافه شدند تا اندیس ورودی‌های قبلی عوض نشود.
+enum ENUM_GRADE_UNCAL { GRUNC_LABEL, GRUNC_SUPPRESS };
+enum ENUM_SYM_CLASS { SYMCLS_FX_MAJOR, SYMCLS_FX_MINOR, SYMCLS_METAL,
+                      SYMCLS_INDEX, SYMCLS_CRYPTO, SYMCLS_ENERGY, SYMCLS_OTHER };
+input group "== Phase 49: symbol profile (همهٔ نمادها: ماژور و مینور) =="
+input bool   InpWriteSymbolProfile   = true;   // نوشتن ICT_Assistant_Canonical_SymbolProfile.csv (طبقهٔ نماد، رقم، ضریب پوینت، منبع کالیبراسیون)
+input bool   InpAutoPointScale       = true;   // نرمال‌سازی خودکار کف‌های پوینتی روی جفت‌ارز ۲/۴ رقمی (روی طلا/شاخص بی‌اثر)
+input string InpGradeRefSymbol       = "XAUUSD"; // نمادی که جدول ثابت درجه رویش فیت شده است (پسوند بروکر نادیده گرفته می‌شود)
+input bool   InpGradeCalibAuto       = true;   // بارگذاری فایل کالیبراسیون همین نماد/تایم‌فریم اگر موجود باشد (ICT_Assistant_Canonical_GradeCalib_<نماد>_<TF>.csv)
+input ENUM_GRADE_UNCAL InpGradeUncalibrated = GRUNC_LABEL; // روی نماد بدون کالیبراسیون: درجه نشان داده شود ولی «مرجع» برچسب بخورد، یا کلاً نشان داده نشود
 

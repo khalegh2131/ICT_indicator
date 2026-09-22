@@ -62,6 +62,7 @@
 #include "modules/30_OnCalculate.mqh"
 #include "modules/31_SignalGrade.mqh"
 #include "modules/32_PendingScenario.mqh"
+#include "modules/33_SymbolProfile.mqh"
 
 //------------------------------------------------------------------
 // بدنهٔ کد این اندیکاتور در پوشهٔ «modules/» است — یک فایل برای هر

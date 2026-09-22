@@ -29,7 +29,10 @@ Assert 'strip body reads g_rrLabel'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,1400}?g
 # Phase 48 merged the pending row into this same body and documented the merge in
 # a comment block before the string, so the window grew again. The rule itself is
 # unchanged - the strip still leads with the fitted grade.
-Assert 'strip body reads the grade'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,2600}?g_grade'
+# Phase 49: the strip's grade fragment now comes from GradeTag(), which is what
+# decides whether a reference win% may be shown as if it were measured on this
+# symbol. The rule is unchanged - the strip still leads with the fitted grade.
+Assert 'strip body reads the grade'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,2600}?GradeTag\(\)'
 Assert 'no iATR inside strip body'     '(?s)void RenderRiskStrip\(\)[\s\S]{0,3000}iATR\(' $false
 # 4) rule: Persian channel = the proven OBJ_EDIT pipeline (raw text, mode 0)
 Assert 'renders via ExplainEditRow'    'ExplainEditRow\("ICTv13_RSTRIP_TXT"'
@@ -62,7 +65,9 @@ Assert 'strip shows SFP marker'        'SFP'
 # Phase 46: the row now LEADS with the grade; the bias field moved after it. Both
 # labels are still Latin-led, which is what kept the line from splitting.
 Assert 'strip shows Bias prefix'       'BIAS: %s'
-Assert 'strip leads with the grade'    'StringFormat\("GRADE: %s[\s\S]{0,120}?BIAS: %s'
+# Phase 49: the grade is still the FIRST field, but its text is now built by
+# GradeTag() so an uncalibrated symbol cannot print the reference numbers bare.
+Assert 'strip leads with the grade'    'StringFormat\("%s[\s\S]{0,120}?BIAS: %s[\s\S]{0,240}?GradeTag\(\)'
 # strip color must come from the phase-32 engine's score (g_rrScore is owned by UpdateReverseRisk)
 Assert 'linked to phase-32 engine'     'g_rrScore>=50\? InpColorBear'
 

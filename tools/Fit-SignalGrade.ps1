@@ -24,22 +24,54 @@
 param(
    [string]$FilesDir = (Join-Path $env:APPDATA 'MetaQuotes\Terminal\Common\Files'),
    [string]$Symbol = 'XAUUSD',
+   # Phase 49: each live chart writes its own ledger (per symbol AND timeframe),
+   # so a fit that pools two timeframes measures neither. -Timeframe selects one
+   # file explicitly; without it the newest match is used and said out loud.
+   [string]$Timeframe = '',
    [int]$Horizon = 12,
    [double]$TargetATR = 2.0,
    [double]$StopATR = 1.0,
    [int]$MinSamples = 30,
+   # A ledger can carry thousands of ROWS and still zero usable SAMPLES: every row is
+   # skipped when the recorded bias is not BULL/BEAR or the recorded ATR is zero.
+   # Without this floor the tool happily emitted thresholds read from a null. It now
+   # refuses instead, because a calibration file built from nothing is worse than none:
+   # the chart would call it "calibrated for this symbol".
+   [int]$MinFitSamples = 200,
    # -Emit writes the fitted table to a fixture so the MQL5 constants can be
    # checked against the DATA instead of against a hand-copied list.
-   [string]$Emit = ''
+   [string]$Emit = '',
+   # -EmitCalib writes the RUNTIME calibration file in the exact format the
+   # indicator's loader reads (key;value per line), so a fit becomes a loadable
+   # per-symbol calibration instead of hand-copied constants.
+   [string]$EmitCalib = '',
+   # -LedgerPath bypasses the symbol->file lookup so many ledgers can be pooled
+   # (e.g. all crosses of one class) and fitted once. The caller is responsible
+   # for saying, in the emitted file, which sample it actually used.
+   [string]$LedgerPath = ''
 )
 
 $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 
-$path = Join-Path $FilesDir ("ICT_Assistant_Canonical_ReverseRisk_" + $Symbol + ".csv")
-if (-not (Test-Path -LiteralPath $path)) {
-   $cand = @(Get-ChildItem -LiteralPath $FilesDir -Filter ("ICT_Assistant_Canonical_ReverseRisk_" + $Symbol + "*.csv") -ErrorAction SilentlyContinue)
-   if ($cand.Count -gt 0) { $path = ($cand | Sort-Object LastWriteTime -Descending)[0].FullName }
+$path = ''
+if (-not [string]::IsNullOrWhiteSpace($LedgerPath)) {
+   $path = $LedgerPath
+   if (-not (Test-Path -LiteralPath $path)) { Write-Host ("MISSING: " + $path); exit 2 }
+} elseif (-not [string]::IsNullOrWhiteSpace($Timeframe)) {
+   $path = Join-Path $FilesDir ("ICT_Assistant_Canonical_ReverseRisk_" + $Symbol + "_" + $Timeframe + ".csv")
+   if (-not (Test-Path -LiteralPath $path)) { Write-Host ("MISSING: " + $path); exit 2 }
+} else {
+   $path = Join-Path $FilesDir ("ICT_Assistant_Canonical_ReverseRisk_" + $Symbol + ".csv")
+   if (-not (Test-Path -LiteralPath $path)) {
+      $cand = @(Get-ChildItem -LiteralPath $FilesDir -Filter ("ICT_Assistant_Canonical_ReverseRisk_" + $Symbol + "*.csv") -ErrorAction SilentlyContinue)
+      if ($cand.Count -gt 0) { $path = ($cand | Sort-Object LastWriteTime -Descending)[0].FullName }
+      if ($cand.Count -gt 1) {
+         Write-Host ("NOTE: " + $cand.Count + " ledgers match this symbol; using the newest (" + (Split-Path -Leaf $path) + ").")
+         Write-Host "      Pass -Timeframe <TF> to fit one timeframe on purpose:"
+         foreach ($c in $cand) { Write-Host ("        " + (Split-Path -Leaf $c.FullName)) }
+      }
+   }
 }
 if (-not (Test-Path -LiteralPath $path)) { Write-Host ("MISSING: " + $path); exit 2 }
 
@@ -116,6 +148,12 @@ for ($i = 0; $i -lt ($rows.Count - $Horizon); $i++) {
 }
 
 $n = $meas.Count
+if ($n -lt $MinFitSamples) {
+   Write-Host ("REFUSING TO EMIT: usable samples = " + $n + " (need " + $MinFitSamples + ").")
+   Write-Host "  Rows are skipped when the bias column is not BULL/BEAR, or when ATR parses as 0."
+   Write-Host ("  Diagnostic: rows read=" + $rows.Count + "; horizons dropped=" + [math]::Min($Horizon, $rows.Count))
+   exit 3
+}
 $w = @($meas | Where-Object { $_.Outcome -eq 'WIN' }).Count
 $baseP = ($w + 1.0) / ($n + 2.0)                        # Laplace
 $baseLogit = [math]::Log($baseP / (1 - $baseP))
@@ -235,3 +273,62 @@ if (-not [string]::IsNullOrWhiteSpace($Emit)) {
    [System.IO.File]::WriteAllLines($abs, [string[]]$out, (New-Object System.Text.UTF8Encoding($false)))
    Write-Host ('emitted fixture -> ' + $abs)
 }
+
+# ---------------------------------------------------------------------------
+# Phase 49: the RUNTIME calibration file.
+#
+# Why a separate format instead of the fixture above: the fixture is the frozen
+# proof of the fit (feature;key;lift); this file is what the indicator's loader
+# reads at OnInit, and its keys are the loader's keys (lift.f1.<bucket> ...).
+# Both come from the SAME in-memory table, so they cannot disagree.
+#
+# It is written as key;value with LF endings and no BOM, because the loader reads
+# it with FileOpen(...,FILE_CSV,';') - a UTF-16 file would yield garbage keys.
+# ---------------------------------------------------------------------------
+if (-not [string]::IsNullOrWhiteSpace($EmitCalib)) {
+   $cal = New-Object System.Collections.ArrayList
+   [void]$cal.Add('# phase 49 -- runtime signal-grade calibration for ONE symbol and timeframe')
+   [void]$cal.Add('# generated by tools/Fit-SignalGrade.ps1 - do not hand-edit')
+   [void]$cal.Add('# delete this file to fall back to the reference table (the indicator says so on chart)')
+   [void]$cal.Add('symbol;' + $Symbol)
+   [void]$cal.Add('tf;' + $(if ([string]::IsNullOrWhiteSpace($Timeframe)) { 'ALL' } else { $Timeframe }))
+   [void]$cal.Add('rows;' + $n)
+   [void]$cal.Add('basewin;' + [math]::Round(100.0*$w/$n, 2).ToString('0.00').Replace(',', '.'))
+   [void]$cal.Add('basen;' + $n)
+   foreach ($f in $featNames) {
+      $fn = $f.Substring(1)                      # F1 -> 1
+      foreach ($k in ($coef[$f].Keys | Sort-Object)) {
+         $v = $coef[$f][$k].ToString('0.###').Replace(',', '.')
+         [void]$cal.Add(('lift.f' + $fn + '.' + $k + ';' + $v))
+      }
+   }
+   [void]$cal.Add('thr.aplus;' + $t4.ToString('0.###').Replace(',', '.'))
+   [void]$cal.Add('thr.a;'     + $t3.ToString('0.###').Replace(',', '.'))
+   [void]$cal.Add('thr.bplus;' + $t2.ToString('0.###').Replace(',', '.'))
+   [void]$cal.Add('thr.b;'     + $t1.ToString('0.###').Replace(',', '.'))
+   $keyOf = @{ 'A+'='aplus'; 'A'='a'; 'B+'='bplus'; 'B'='b'; 'C'='c' }
+   foreach ($gr in @('A+','A','B+','B','C')) {
+      $sel = switch ($gr) {
+         'A+' { $scored | Where-Object { $_.Score -ge $t4 } }
+         'A'  { $scored | Where-Object { $_.Score -ge $t3 -and $_.Score -lt $t4 } }
+         'B+' { $scored | Where-Object { $_.Score -ge $t2 -and $_.Score -lt $t3 } }
+         'B'  { $scored | Where-Object { $_.Score -ge $t1 -and $_.Score -lt $t2 } }
+         'C'  { $scored | Where-Object { $_.Score -lt $t1 } }
+      }
+      $gn = @($sel).Count
+      if ($gn -eq 0) { continue }
+      $gw = @($sel | Where-Object { $_.Outcome -eq 'WIN' }).Count
+      [void]$cal.Add('win.' + $keyOf[$gr] + ';' + [math]::Round(100.0*$gw/$gn,1).ToString('0.0').Replace(',', '.'))
+      [void]$cal.Add('n.'   + $keyOf[$gr] + ';' + $gn)
+   }
+   $abs = $EmitCalib
+   if (-not [System.IO.Path]::IsPathRooted($abs)) { $abs = Join-Path (Split-Path -Parent $PSScriptRoot) $EmitCalib }
+   $dir = Split-Path -Parent $abs
+   if ($dir -and -not (Test-Path -LiteralPath $dir)) { New-Item -ItemType Directory -Path $dir -Force | Out-Null }
+   [System.IO.File]::WriteAllText($abs, (($cal -join "`n") + "`n"), (New-Object System.Text.UTF8Encoding($false)))
+   Write-Host ('emitted runtime calibration -> ' + $abs)
+}
+
+# Explicit exit code: a script that falls off its own end leaves $LASTEXITCODE at the
+# PREVIOUS command's value, so a caller that checks it would read a stale refusal.
+exit 0

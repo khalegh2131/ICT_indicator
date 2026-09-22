@@ -168,7 +168,7 @@ if ($i -ge 0) {
 }
 Check 'C1_strip_composes_the_path' ($stripBody -match 'PendingFragmentFa\(\)') `
    'RenderRiskStrip() appends the pending fragment'
-Check 'C2_strip_leads_with_the_grade' ($stripBody -match 'GRADE:') `
+Check 'C2_strip_leads_with_the_grade' (($stripBody -match 'GradeTag\(\)') -and ($stripBody -match 'BIAS:')) `
    'the row still leads with the fitted grade'
 $pendBody = ''
 $i = $code.IndexOf('string PendingFragmentFa()')

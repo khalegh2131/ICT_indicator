@@ -101,7 +101,7 @@ void BuildTrendlines(double atrValue)
    if(!InpEnablePhase12 || !InpDetectTrendlineLiq) return;
    int n=ArraySize(g_swingsLTF);
    if(n<2){ g_trendlineReject="سوئینگ تأییدشدهٔ کافی برای ساخت خط نیست"; return; }
-   double tol=(atrValue>0.0)? atrValue*InpTrendlineTolATR : PointsToPrice(InpEQ_Tolerance_Points);
+   double tol=(atrValue>0.0)? atrValue*InpTrendlineTolATR : PointFloorPrice(InpEQ_Tolerance_Points);
 
    int built=0;
    for(int side=0;side<2;side++)
@@ -224,7 +224,7 @@ void UpdateRangeLiquidity(double atrValue)
       g_rangeReject=StringFormat("RANGE REJECT | ارتفاع %.2f از حد مجاز %.2f (%.1f برابر میانگین دامنه) بیشتر است — روند است، نه رنج", height, maxH, InpRangeMaxATR);
       return;
    }
-   double tol=MathMax(PointsToPrice(InpEQ_Tolerance_Points), atrValue*InpEQ_ToleranceATR);
+   double tol=MathMax(PointFloorPrice(InpEQ_Tolerance_Points), atrValue*InpEQ_ToleranceATR);
    int hiT=0, loT=0;
    for(int i=start;i<n;i++)
    {

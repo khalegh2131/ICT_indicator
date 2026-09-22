@@ -257,6 +257,17 @@ double g_htfRangeHigh=0, g_htfRangeLow=0;
 double   g_analysisClose=0.0;   // همان close کندل تحلیلی که موتور ستاپ استفاده می‌کند
 double   g_analysisATR=0.0;     // ATR همان کندل
 double   g_stopsLevelPrice=0.0; // SYMBOL_TRADE_STOPS_LEVEL تبدیل‌شده به قیمت
+
+// --- فاز ۴۹: کالیبراسیون درجه به‌ازای هر نماد. اگر فایل کالیبراسیون همین
+// نماد/تایم‌فریم روی دیسک باشد، همین‌جا بار می‌شود و جدول ثابت ۳۱_SignalGrade
+// کنار می‌رود. اگر نباشد، g_calLoaded صفر می‌ماند و UI صریح می‌گوید اعداد از
+// نماد مرجع آمده‌اند (GradeSourceFa).
+string   g_calKeys[];
+double   g_calVals[];
+bool     g_calLoaded=false;
+int      g_calRows=0;
+string   g_calSource="none";
+string   g_calSymbol="";
 string   g_dolRejectReason="";  // اگر DOL پیدا نشد، دلیل واقعی
 // --- فاز ۱۳ (#۷): نگهبان «حداکثر یک ارزیابی ساختار به‌ازای هر کندل HTF» ---
 datetime g_lastHtfEvalBarTime = 0;   // باکت HTF که آخرین بار ارزیابی شد

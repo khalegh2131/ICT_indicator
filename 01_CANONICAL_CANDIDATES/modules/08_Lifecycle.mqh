@@ -117,6 +117,14 @@ int OnInit()
    // فاز ۲۷: پیش‌فرض CLICK است و رویداد حرکتی موس **فعال نمی‌شود** تا موس
    // کاملاً آزاد باشد (درگ/زوم چارت هیچ دخالتی نمی‌بیند).
    ChartSetInteger(0, CHART_EVENT_MOUSE_MOVE, InpExplainOpen==EXPLAIN_OPEN_HOVER);
+
+   // فاز ۴۹: پروفایل نماد + کالیبراسیون درجهٔ همین نماد.
+   // اگر فایل کالیبراسیون همین نماد/تایم‌فریم موجود باشد، جدول ثابت جایش را
+   // می‌دهد (LoadGradeCalibration)؛ اگر نباشد، صفر می‌ماند و UI صریح می‌گوید
+   // اعداد از نماد مرجع آمده‌اند. پس روی هیچ نمادی عدد جابه‌جا نماد جا نمی‌زند.
+   LoadGradeCalibration();
+   WriteSymbolProfileDiag();
+
    EventSetTimer(1);
    return INIT_SUCCEEDED;
 }
