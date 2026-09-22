@@ -5,8 +5,11 @@ $ErrorActionPreference = 'Stop'
 $src = '01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5'
 if (-not (Test-Path $src)) { $src = 'ICT_Assistant_Canonical.mq5' }
 if (-not (Test-Path $src)) { Write-Output 'PHASE36: FAIL (source not found)'; exit 1 }
-$text = [System.IO.File]::ReadAllText($src)
-$lines = [System.IO.File]::ReadAllLines($src)
+# Flatten the module shell the way MQL5 does, so the anchors below still name
+# the code that compiles (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$text = Get-CanonicalSourceText  -Path $src
+$lines = Get-CanonicalSourceLines -Path $src
 $pass = 0; $fail = 0
 
 function Check([string]$name, [bool]$ok) {
@@ -98,14 +101,36 @@ Check 'Explain route for AMD_PRICE'                       ($text.Contains('AMD_P
 
 # 11) Price Delivery
 Check 'Price Delivery label on leg'                       ($text.Contains('ICTv13_LOCATION_PDLBL') -and $text.Contains('Delivering UP'))
-Check 'ExplainLocation teaches delivery'                  ($text.Contains('Price Delivery:'))
+# Phase 42 renamed this tooltip so the Latin label opens the row and the rest
+# is pure Persian (a Latin word inside a Persian clause splits the RTL run).
+$pdFnStart = $text.IndexOf('void ExplainLocation(')
+$pdFnEnd   = if ($pdFnStart -ge 0) { $text.IndexOf("`n}`n", $pdFnStart) } else { -1 }
+$pdFn = if ($pdFnStart -ge 0 -and $pdFnEnd -gt $pdFnStart) { $text.Substring($pdFnStart, $pdFnEnd - $pdFnStart) } else { '' }
+Check 'ExplainLocation teaches delivery'                  ($text.Contains('PRICE DELIVERY |') -or $pdFn.Contains('PRICE DELIVERY |') -or $text.Contains('PRICE DELIVERY | لگ فعال'))
 
 # 12) Nested / MTF Mitigation
 $i = FindLine 'Nested / Multi-timeframe Mitigation'
 Check 'Nested mitigation comment with source'             ($i -ge 0)
 Check 'Nested boost wired in POI registry'                ($text.Contains('g_poi[q].score+=4'))
-Check 'Nested condition = same-direction FVG inside HTF zone' (WindowHas $i 2 10 @('g_fvgs[j].direction', 'nested'))
-Check 'POI explain lists nested bonus'                    ($text.Contains('Nested Mitigation +'))
+# Phase 43: the nested witness is now compared through the *active* role
+# (FVGActiveDir / OBActiveDir) instead of the raw birth direction, because a gap
+# that closed through its far edge plays the opposite role and a flipped zone is
+# not a same-direction witness any more. The invariant is unchanged: the FVG must
+# sit inside the HTF zone AND move the same way it does.
+Check 'Nested condition = same-direction FVG inside HTF zone' (WindowHas $i 2 12 @('FVGActiveDir(g_fvgs[j])', 'nested'))
+# Phase 42 rewrote the family's teaching text so no Latin word sits inside a
+# Persian clause; the old English row "Nested Mitigation +" became
+# "بلوک تودرتوی درونی ۴+". The invariant is the same: the score breakdown the
+# trader reads must name the nested bonus, and the +4 must still be wired in the
+# engine (asserted separately by 'Nested boost wired in POI registry').
+# The word is built from codepoints because Windows PowerShell 5.1 decodes a
+# BOM-less .ps1 with the system ANSI codepage, which would mangle a literal.
+$chTe = [char]0x062A; $chVav = [char]0x0648; $chDal = [char]0x062F; $chRe = [char]0x0631
+$wordNested = "$chTe$chVav$chDal$chRe$chTe$chVav"   # تودرتو - "nested"
+$poiFnStart = $text.IndexOf('void ExplainBestPOI(')
+$poiFnEnd   = if ($poiFnStart -ge 0) { $text.IndexOf("`n}`n", $poiFnStart) } else { -1 }
+$poiFn = if ($poiFnStart -ge 0 -and $poiFnEnd -gt $poiFnStart) { $text.Substring($poiFnStart, $poiFnEnd - $poiFnStart) } else { '' }
+Check 'POI explain lists nested bonus'                    ($poiFn.Contains($wordNested) -and -not $text.Contains('Nested Mitigation +'))
 
 # 13) Regressions guards (phase-29/30 lessons must not reappear)
 Check 'QT enum appended AFTER existing enums (stable ids)' ($text.Contains('enum ENUM_SILVERBULLET { SB_NONE, SB_LONDON, SB_NY_AM, SB_NY_PM }'))

@@ -34,7 +34,9 @@ $ErrorActionPreference = 'Stop'
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 $src  = Join-Path $root '01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5'
-$code = Get-Content -Raw -Encoding UTF8 $src
+# Flatten the module shell the way MQL5 does (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$code = Get-CanonicalSourceText -Path $src
 
 $pass = 0
 $fail = 0

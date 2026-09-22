@@ -1,0 +1,20 @@
+# Phase 41 -- token-level RTL isolation (RtlSafe) rule cases.
+# Format:  logical-line ; expected-line
+# The expected column is derived by hand from the rule text, not from the code:
+#   * a token = a space-separated word
+#   * "Latin token" = the token contains at least one letter A-Z/a-z
+#   * digits and punctuation are NOT Latin: an EN number inside an RTL run is
+#     resolved by UBA rule W and stays inside that run, so it never splits the
+#     Persian sentence and must not move
+#   * every Latin token that appears AFTER a Persian token moves to the head of
+#     the line (relative order among moved tokens preserved) and is separated
+#     from the Persian remainder by " | "
+#   * an all-Latin line, and a line whose Latin already comes first, are untouched
+چیست: ناحیهٔ عدم‌تعادل قیمت;چیست: ناحیهٔ عدم‌تعادل قیمت
+BISI — نام دوم همین گپ;BISI — نام دوم همین گپ
+قیمت 1.4780 است;قیمت 1.4780 است
+ورود در جهت Bias;Bias | ورود در جهت
+وضعیت: CE لمس شده;CE | وضعیت: لمس شده
+الف Displacement و CE ب;Displacement CE | الف و ب
+ZONE FVG #1 BULLISH;ZONE FVG #1 BULLISH
+برای ردیابی عددی: ردیف FVG #17896896000 در فایل;FVG | برای ردیابی عددی: ردیف #17896896000 در فایل

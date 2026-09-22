@@ -189,8 +189,11 @@ foreach ($r in $eqRows) {
 "=== B) SOURCE PROOF: Phase 13 invariants"
 # =====================================================================
 if (-not (Test-Path $Source)) { throw "source not found: $Source" }
-$src = Get-Content -LiteralPath $Source -Raw -Encoding UTF8
-$lines = Get-Content -LiteralPath $Source -Encoding UTF8
+# Flatten the module shell the way MQL5 does, so the anchors below still name
+# the code that compiles (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src = Get-CanonicalSourceText  -Path $Source
+$lines = Get-CanonicalSourceLines -Path $Source
 
 # B1 -- #7: the HTF evaluation is guarded by the HTF bucket, and the guard is
 #       placed BEFORE the pivot push and BEFORE the structure evaluation.

@@ -59,7 +59,9 @@
         <h3>راه ب — کامپایل از سورس (کنترل کامل)</h3>
         <p>
           ۱) بستهٔ سورس را از همان Release بگیر (یا مخزن را clone کن).<br>
-          ۲) فایل <code>.mq5</code> را در <code>MQL5\Indicators\</code> بگذار.<br>
+          ۲) فایل <code>.mq5</code> <strong>و پوشهٔ <code>modules/</code></strong> را با هم در <code>MQL5\Indicators\</code> بگذار
+          — بدنهٔ کد در همان <code>modules/</code> است (یک فایل برای هر خانوادهٔ استراتژی) و فایل <code>.mq5</code> فقط آن‌ها را include می‌کند؛
+          پس این دو باید کنار هم بمانند وگرنه کامپایل خطا می‌دهد.<br>
           ۳) در متاتریدر <strong>F4</strong> بزن تا MetaEditor باز شود و <strong>Compile</strong> کن.<br>
           ۴) باید با <strong>۰ خطا و ۰ هشدار</strong> بسازد.
         </p>
@@ -220,6 +222,7 @@
       <li><strong>پنل توضیح.</strong> هر آبجکت روش بازبینی دستی عددش را می‌گوید: کدام کندل‌ها، کدام مرز، و چه شرطی.</li>
       <li><strong>ابزارهای اعتبارسنجی.</strong> در پوشهٔ <code>tools/</code> بیست ابزار PowerShell است که قاعده‌ها را قفل می‌کنند. با <code>powershell -File tools/Validate-Phase37.ps1</code> می‌توانی هرکدام را جدا اجرا کنی.</li>
       <li><strong>آزمون رفتاری روی کندل ساختگی.</strong> اندیکاتور یک هارنس داخلی دارد (ورودی <code>InpRunBehaviorSelfTest</code>) که ۲۵ سناریو با پاسخ معلوم را روی <strong>همان توابع واقعی تشخیص</strong> اجرا می‌کند و گزارش را در <code>ICT_Assistant_Canonical_SelfTest.csv</code> می‌نویسد. ابزار <code>Validate-Phase37.ps1</code> آن گزارش را می‌خواند و اعداد را با یک بازمحاسبهٔ مستقل مقایسه می‌کند.</li>
+      <li><strong>اثبات اینکه بازآرایی کد منطق را عوض نکرده.</strong> منبع اصلی یک فایل ۱۱٬۰۶۸ خطی بود؛ حالا یک فایل <code>.mq5</code> است که ۳۰ ماژول در <code>modules/</code> را include می‌کند. با <code>powershell -File tools/Verify-ModuleSplit.ps1</code> ثابت می‌شود این ۳۰ برش دقیقاً به همان <strong>SHA256</strong> فایل قبلی بازمی‌گردند — بایت‌به‌بایت، نه تقریبی.</li>
     </ol>
     <div class="callout">
       در آن آزمون، یک سناریو عمداً انتظار <strong>غلط</strong> دارد. اگر آن ردیف شکست نخورد، یعنی مقایسه کور است و بقیهٔ PASSها بی‌ارزش‌اند.

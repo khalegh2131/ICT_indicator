@@ -320,7 +320,10 @@ Check "lifecycle-full-vs-chunked-is-identical" $same `
 # =====================================================================
 # B) BEHAVIOR INVARIANTS OVER REALLY RECORDED SNAPSHOTS
 # =====================================================================
-$srcText = Get-Content -Path $Source -Raw -Encoding UTF8
+# Flatten the module shell the way MQL5 does, so the anchors below still name
+# the code that compiles (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$srcText = Get-CanonicalSourceText -Path $Source
 $expireBars = 500
 $mExpire = [regex]::Match($srcText, 'InpFVG_ExpireBars\s*=\s*(\d+)')
 if ($mExpire.Success) { $expireBars = [int]$mExpire.Groups[1].Value }

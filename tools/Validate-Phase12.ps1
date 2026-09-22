@@ -187,8 +187,12 @@ Check "selftest(poi bad fixture)" ($badP -eq $rowsP.Count) ("caught " + $badP + 
 # ========================================================= C) source proof
 "=== C) SOURCE PROOF ==="
 if (-not (Test-Path $Source)) { throw "source not found: $Source" }
-$src   = Get-Content -LiteralPath $Source -Raw -Encoding UTF8
-$lines = Get-Content -LiteralPath $Source -Encoding UTF8
+# The canonical indicator is now a shell plus one module per strategy family.
+# Flatten it exactly the way the MQL5 preprocessor does, so these anchors are
+# still checked against the code that actually compiles.
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src   = Get-CanonicalSourceText  -Path $Source
+$lines = Get-CanonicalSourceLines -Path $Source
 $nl = ($lines -join "`n")
 
 # C1 - a lookalike percent sign inside a format string silently breaks substitution.
@@ -277,7 +281,7 @@ $c10phase = ($nl -match 'ICT_Assistant_Canonical_Phase12_Diag\.csv') -and
             ($nl -match '"POICount","BestPOIKind","BestPOIScore"') -and
             ($nl -match '"EntryModel","ModelReason","Quality","QualityMin","SetupStatus"')
 $c10rev   = ($nl -match 'string firstKey=FileReadString\(handle\);') -and
-            ($nl -match 'FileDelete\("ICT_Assistant_Canonical_Reversal_Diag\.csv",FILE_COMMON\);')
+            ($nl -match 'FileDelete\("ICT_Assistant_Canonical_Reversal_Diag_"\+ChartTfCode\(\)\+"\.csv",FILE_COMMON\);')
 Check "diag-headers-self-heal" ($c10phase -and $c10rev) ("phase12 header=" + $c10phase + " ; reversal self-heal=" + $c10rev)
 
 # C11 - the build/load stamp exists and is recorded both at attach and inside the
@@ -285,7 +289,10 @@ Check "diag-headers-self-heal" ($c10phase -and $c10rev) ("phase12 header=" + $c1
 $c11stamp = ($nl -match 'PersistLoadStamp\(\);') -and
             ($nl -match 'g_buildStamp=TimeToString\(TimeLocal\(\)') -and
             (( [regex]::Matches($src, 'g_buildStamp\)').Count) -ge 1)
-$c11rows  = ([regex]::Matches($src, ',\s*\r?\n\s*g_buildStamp\)').Count) -ge 1
+# Phase 47 appended one more column (ChartTF) after the stamp in the reversal
+# ledger, so the stamp is no longer the last argument of FileWrite. The property
+# under test is that a ledger row still carries the stamp, not that it ends there.
+$c11rows  = ([regex]::Matches($src, ',\s*\r?\n\s*g_buildStamp[,)]').Count) -ge 1
 Check "build-stamp-recorded" ($c11stamp -and $c11rows) ("stamp at attach=" + $c11stamp + " ; stamp inside ledger rows=" + $c11rows)
 
 # C12 - the phase-12 ledger is written from BOTH pipeline branches (history rebuild

@@ -77,7 +77,10 @@ Write-Output "=== Phase 37 -- behavioral self-test verifier (FVG / OB / Sweep) =
 Write-Output ""
 
 if (-not (Test-Path -LiteralPath $Source)) { throw "Canonical source not found: $Source" }
-$src = Get-Content -LiteralPath $Source -Raw -Encoding UTF8
+# The canonical indicator is a shell plus one module per strategy family;
+# flatten it the way MQL5 does so the wiring proof below sees the real code.
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src = Get-CanonicalSourceText -Path $Source
 
 # ---------------------------------------------------------------------
 # A) SECOND IMPLEMENTATION -- recompute every expected number from scratch
@@ -218,6 +221,12 @@ $required = @(
    "FVG_MINGAP_REJECTS_SMALL_GAP","FVG_MINGAP_ACCEPTS_LARGE_GAP",
    "FVG_IMPLIED_BULL_MIDWICK_FORMULA","FVG_IMPLIED_BULL_REQUIRES_L3_LE_H1",
    "FVG_VOLUME_IMBALANCE_IS_SEPARATE_KIND",
+   # phase 43 -- iFVG inversion must keep birth direction/geometry while the
+   # active role flips, and the panel/CSV report must be produced by one function
+   "FVG_INVERSION_TARGET_ZONE_PRESENT","FVG_INVERSION_FLAG_AND_TIME",
+   "FVG_INVERSION_KEEPS_BIRTH_DIRECTION","FVG_INVERSION_SWITCHES_ACTIVE_ROLE",
+   "FVG_INVERSION_KEEPS_GEOMETRY_AND_ID","FVG_INVERSION_REPORTS_ONE_DIRECTION",
+   "FVG_INVERSION_IS_ONE_WAY",
    "OB_ORIGIN_IS_LAST_OPPOSITE_BAR","OB_NO_DISPLACEMENT_IS_INVALID",
    "OB_STANDALONE_WHEN_NO_STRUCTURE_EVENT","OB_VALID_WITH_DISPLACEMENT",
    "OB_CORE_AND_SWEEP_LINKED","OB_DEDUP_SAME_ZONE_NOT_REPEATED",
@@ -243,6 +252,27 @@ if (-not (Test-Path -LiteralPath $Report)) {
    Write-Output ""
    Write-Output ("RESULT: PASS={0} FAIL={1} PENDING={2}" -f $pass, $fail, $pending)
    Write-Output "Section A and C are proved. Section B needs one chart reload to produce the report."
+   if ($fail -gt 0) { exit 1 }
+   exit 0
+}
+
+# The compiled unit is the shell plus every module next to it, so the true
+# "source time" is the newest compile input -- not the shell's own timestamp.
+# A report written before that moment was produced by an older build; making
+# it FAIL would blame the code for the user not having reloaded yet, and
+# making it PASS would claim evidence we do not have. So it is PENDING.
+$srcInputs = @($Source)
+$srcModDir = Join-Path (Split-Path -Parent $Source) 'modules'
+if (Test-Path -LiteralPath $srcModDir) {
+   $srcInputs += @(Get-ChildItem -LiteralPath $srcModDir -Filter '*.mqh' | ForEach-Object { $_.FullName })
+}
+$srcTime = ($srcInputs | ForEach-Object { (Get-Item -LiteralPath $_).LastWriteTime } | Sort-Object -Descending | Select-Object -First 1)
+$reportTime = (Get-Item -LiteralPath $Report).LastWriteTime
+if ($reportTime -lt $srcTime) {
+   Pending "B_STALE_REPORT" ("report written {0} is older than the newest compile input {1} -- do one chart reload (Remove -> Refresh -> Add), then re-run" -f $reportTime.ToString('yyyy-MM-dd HH:mm:ss'), $srcTime.ToString('yyyy-MM-dd HH:mm:ss'))
+   Write-Output ""
+   Write-Output ("RESULT: PASS={0} FAIL={1} PENDING={2}" -f $pass, $fail, $pending)
+   Write-Output "Section B is PENDING: the report on disk predates the current source, so it cannot judge it."
    if ($fail -gt 0) { exit 1 }
    exit 0
 }
@@ -357,6 +387,19 @@ Check "B17_SWEEP_DIRECTION" (($a17r -match 'dir=1') -and ($a17r -notmatch 'retur
 $a18r = ActualOf $rows "SWEEP_SSL_SWEPT_IS_BULLISH"
 Check "B18_SWEEP_SSL_DIRECTION" ($a18r -match 'dir=0') `
    ("direction must be BULL (dir=0); report Actual = '{0}'" -f $a18r)
+
+# B20 the phase-43 inversion rows must agree with the rule text, not merely exist
+$a20r = ActualOf $rows "FVG_INVERSION_KEEPS_BIRTH_DIRECTION"
+Check "B20_INVERSION_KEEPS_BIRTH_DIRECTION" (($a20r -match 'dir=0') -and ($a20r -match 'BULL')) `
+   ("direction is the birth direction and must stay BULL (0); report Actual = '{0}'" -f $a20r)
+
+$a21r = ActualOf $rows "FVG_INVERSION_SWITCHES_ACTIVE_ROLE"
+Check "B21_INVERSION_SWITCHES_ACTIVE_ROLE" (($a21r -match 'activeDir=1') -and ($a21r -match 'BEAR')) `
+   ("a close below the bottom edge must flip the active role to BEAR (1); report Actual = '{0}'" -f $a21r)
+
+$a22r = ActualOf $rows "FVG_INVERSION_REPORTS_ONE_DIRECTION"
+Check "B22_INVERSION_REPORT_STRING" ($a22r -eq 'BULLISH -> BEARISH (iFVG)') `
+   ("panel and CSV share this exact string; report Actual = '{0}'" -f $a22r)
 
 $a19r = ExpectedOf $rows "SENSITIVITY_probe_must_report_FAIL"
 Check "B19_SENSITIVITY_CLAIM_IS_THE_FALSE_ONE" ($a19r -like '*deliberately false claim*') `

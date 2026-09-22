@@ -20,11 +20,12 @@ Full component-by-component status: `07_DOCUMENTATION/AUDIT_ICT_SMC_MMM.md`.
 
 ## Files
 
-- `ICT_Assistant_Canonical_v0_1.mq5`: the only source file required by this package.
+- `ICT_Assistant_Canonical_v0_1.mq5`: the shell. It holds the `#property` header and the `#include` list.
+- `modules/`: the 30 per-family source modules the shell includes. **This folder is required** — the shell alone does not compile.
 
-## Required `.mqh` files
+## Required `.mqh` files (30, inside `modules/`)
 
-None. This version is intentionally self-contained. It does not include the legacy V13/V14 headers or the older shared engines because those files have different timing contracts and would make this package non-deterministic to maintain.
+The body of the indicator now lives in `modules/`, one file per strategy family (inputs, types and state, liquidity, sweep, displacement, FVG, order blocks, HTF, sessions, setup engine, SMC/MMM, reversal gate, drawing, redraw, explain, Persian rendering, dashboard, closed-bar pipeline, self-test, OnCalculate). The split is byte-exact: rebuild the shell plus its modules in include order and you get the reviewed single-file source back, hash for hash — `tools/Verify-ModuleSplit.ps1` proves this on every build. None of these modules come from the legacy V13/V14 headers; those stay excluded because their timing contracts differ.
 
 ## Current capabilities
 
@@ -75,11 +76,11 @@ Repair roadmap: documented phase-by-phase in the repository documentation (phase
 
 ## Installation
 
-1. Copy this `.mq5` file into the terminal's `MQL5\Indicators` folder, or open it directly in MetaEditor and compile it.
+1. Copy the `.mq5` **and** the `modules/` folder into the terminal's `MQL5\Indicators` folder, keeping them side by side (the shell resolves `modules/...` relative to itself), then compile the `.mq5` in MetaEditor. Using the released `.ex5` instead skips this step entirely.
 2. Attach `ICT_Assistant_Canonical_v0_1` to a chart.
 3. Start with a demo account and inspect closed-bar events in visual replay.
 4. Do not treat the `READY` state as an automatic trading instruction.
 
-## Why no `.mqh` files yet
+## Why the code is split into `.mqh` modules now
 
-The package is kept deliberately small until each subsystem has a tested contract. When a subsystem becomes stable, it can be extracted into a focused header such as `CanonStructure.mqh`, `CanonLiquidity.mqh`, `CanonZones.mqh` or `CanonRender.mqh`. Those headers should be added only with tests and a documented ownership boundary.
+The original single file reached 11,068 lines, which made every change expensive: no include boundaries to reason about, no way to see one family at a time, and a full re-read of the file for each edit. The split extracts exactly those focused headers this document anticipated — structure, liquidity, zones, render and the rest — as 30 contiguous slices of the original, included in the original order. Because the slices are contiguous and ordered, the compiled translation unit is unchanged (global/struct/enum declaration order is preserved), and because the slices are frozen to a known SHA256, the refactor is verifiable rather than merely claimed. Ownership boundaries are the file names themselves: one family per module.

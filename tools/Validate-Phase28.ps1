@@ -11,7 +11,9 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $src  = Join-Path $root '01_CANONICAL_CANDIDATES\ICT_Assistant_Canonical.mq5'
 if (-not (Test-Path -LiteralPath $src)) { throw "Source not found: $src" }
-$code = Get-Content -Raw -Encoding UTF8 $src
+# Flatten the module shell the way MQL5 does (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$code = Get-CanonicalSourceText -Path $src
 
 $script:pass = 0
 $script:fail = 0

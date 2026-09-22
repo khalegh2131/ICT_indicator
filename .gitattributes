@@ -1,0 +1,33 @@
+# ============================================================
+# ICT Indicator repo - .gitattributes
+# ============================================================
+# Why this file exists
+# --------------------
+# tools/Verify-ModuleSplit.ps1 proves that the shell + the 32 modules reassemble
+# to the exact frozen SHA256 of the compiled translation unit. That proof is made
+# on RAW BYTES, so the checked-out bytes must be identical for everyone:
+#
+#   * without this file, a Windows clone with core.autocrlf=true rewrites every
+#     line ending to CRLF, the SHA256 changes, and the gate fails - not because a
+#     single source byte was edited, but because the checkout rewrote them.
+#
+# Hence: the MQL5 sources are pinned to LF everywhere (repo and working tree).
+# MetaEditor compiles LF just as well, and the LF-only BOM'd source is what the
+# frozen baselines were produced from.
+# ------------------------------------------------------------
+
+*.mq5   text eol=lf
+*.mqh   text eol=lf
+
+# Scripts and fixtures the validators hash or diff byte-for-byte.
+*.ps1   text eol=lf
+*.csv   text eol=lf
+*.md    text eol=lf
+*.html  text eol=lf
+*.txt   text eol=lf
+
+# Real binaries keep their bytes untouched.
+*.ex5   binary
+*.ex4   binary
+*.png   binary
+*.zip   binary

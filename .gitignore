@@ -31,6 +31,10 @@ $RECYCLE.BIN/
 !05_TESTS_AND_VALIDATION/**/*.fixture.csv
 !**/*.fixture.csv
 
+# --- Validator runtime reports (written on failure, stale the moment the source
+# changes; the fixture files above are the real inputs) ---
+05_TESTS_AND_VALIDATION/persian_latin_offenders.txt
+
 # --- Local scratch / private notes ---
 00_INBOX_NEW/private*
 TODO_local*

@@ -26,7 +26,7 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 | Recalculate with repaint | Analysis runs on **closed bars only**; pivots confirm before they publish |
 | One global model across all timeframes | **Each timeframe works independently** with its own registry and drawing |
 | Clutter that grows forever | Registry caps, FIFO expiry, and invalidated history are **removed automatically** |
-| Vague claims | Every operational definition is documented, and **20 rule validators** lock the rules |
+| Vague claims | Every operational definition is documented, and **21 rule validators** lock the rules |
 | Nothing proving the arithmetic | A behavior harness runs 25 synthetic-candle scenarios through the **real detection functions** and compares the numbers against an independent recomputation |
 
 ## Feature overview
@@ -49,8 +49,10 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 
 ## Installation
 
-1. Copy `08_FINAL_PACKAGE/ICT_Assistant_Canonical_v0_1/ICT_Assistant_Canonical_v0_1.mq5` into
-   `MQL5\Indicators\` (any subfolder you like).
+1. Copy `08_FINAL_PACKAGE/ICT_Assistant_Canonical_v0_1/ICT_Assistant_Canonical_v0_1.mq5` **and** its
+   `modules/` folder into `MQL5\Indicators\` (any subfolder you like, but keep the two together —
+   the shell resolves `modules/...` relative to itself). To skip this step entirely, download the
+   compiled `.ex5` from the [latest release](https://github.com/khalegh2131/ICT_indicator/releases/latest) instead.
 2. Open MetaEditor (F4 in the terminal) and compile — the file builds with **0 errors, 0 warnings** on a current MT5 build.
 3. In the Navigator, right-click → **Refresh**, then drag the indicator onto an XAUUSD chart (other symbols work; defaults are tuned for gold).
 4. Chart stays clean by default. Open the explanation panel by holding the configured key (default **Ctrl**) while hovering an object; the panel opens on **click** in the default profile.
@@ -67,15 +69,19 @@ It is both an **indicator and a teacher**: click on any line, zone or event and 
 ## Repository layout
 
 ```
-01_CANONICAL_CANDIDATES/   the single canonical source (.mq5)
+01_CANONICAL_CANDIDATES/   the canonical shell (.mq5) + modules/ — one .mqh per strategy family
 05_TESTS_AND_VALIDATION/   CSV fixtures for the validators
 07_DOCUMENTATION/          architecture, audits, validation plan, research notes
 08_FINAL_PACKAGE/          ready-to-compile package
 docs/                      GitHub Pages site: landing page, interactive demo, Persian guide
-tools/                     sync-compile pipeline + 20 rule validators (PowerShell)
+tools/                     sync-compile pipeline, module-split verifier + 21 rule validators (PowerShell)
 ```
 
-The build pipeline (`tools/Sync-And-Compile-Canonical.ps1`) syncs the canonical source to your MT5 data folder and compiles it via MetaEditor, then verifies freshness by timestamp — it never trusts exit codes alone.
+The build pipeline (`tools/Sync-And-Compile-Canonical.ps1`) mirrors the shell plus all 30 modules to your MT5 data folder, proves the split still reassembles to the reviewed source (`tools/Verify-ModuleSplit.ps1`), and only then compiles. It verifies every copied file by hash and checks artifact freshness by timestamp — it never trusts exit codes alone.
+
+### Where the code lives
+
+The canonical source used to be one 11,068-line file. It is now a shell plus 30 contiguous slices, one per strategy family (`01_CANONICAL_CANDIDATES/modules/`, index in its `README.md`). The slices are taken in the original order and included in that same order, so the compiled translation unit is unchanged — global, struct and enum declaration order is preserved. `tools/Verify-ModuleSplit.ps1` reassembles shell + modules exactly the way the MQL5 preprocessor does and requires it to match a frozen SHA256, so the split is provable rather than asserted; the build refuses to run if that check fails.
 
 ## Design rules this project commits to
 
@@ -97,7 +103,7 @@ The build pipeline (`tools/Sync-And-Compile-Canonical.ps1`) syncs the canonical 
 Most indicator repositories ask you to trust them. This one ships three independent ways to check it:
 
 1. **The explanation panel itself** tells you how to recompute the number by hand — which bars, which boundary, which condition.
-2. **20 rule validators** in `tools/` lock the operational definitions against silent drift.
+2. **21 rule validators** in `tools/` lock the operational definitions against silent drift.
 3. **A behavior harness on synthetic data.** The indicator can run 25 hand-built candle scenarios (FVG geometry, the minimum-gap guard, the implied-FVG mid-wick formula, volume imbalance, order-block origin bar and lookback, sweep confirmation and nearest-level ownership) through the *real* `DetectFVG` / `DetectOB` / `DetectSweep` functions and write `ICT_Assistant_Canonical_SelfTest.csv`. `tools/Validate-Phase37.ps1` recomputes every expected number independently and requires the report to match — and it requires exactly **one deliberately failing** sensitivity row, so a report that cannot fail is rejected rather than celebrated.
 
 ## Contributing

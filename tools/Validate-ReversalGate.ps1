@@ -118,8 +118,11 @@ Check "self-test(bad fixture is rejected)" ($badCaught -eq $badTotal) `
 "=== B) SOURCE PROOF: Phase 11 invariants"
 # =====================================================================
 if (-not (Test-Path $Source)) { throw "source not found: $Source" }
-$src = Get-Content -LiteralPath $Source -Raw -Encoding UTF8
-$lines = Get-Content -LiteralPath $Source -Encoding UTF8
+# Flatten the module shell the way MQL5 does, so the anchors below still name
+# the code that compiles (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src = Get-CanonicalSourceText  -Path $Source
+$lines = Get-CanonicalSourceLines -Path $Source
 
 # B1 -- acceptance criterion 3: nothing outside the structure engine writes the bias
 $assign = @()

@@ -11,7 +11,9 @@ $src  = Join-Path $root '01_CANONICAL_CANDIDATES\ICT_Assistant_Canonical.mq5'
 $tool = Join-Path $root 'tools\Report-ReverseRisk.ps1'
 if (-not (Test-Path -LiteralPath $src))  { throw "Source not found: $src" }
 if (-not (Test-Path -LiteralPath $tool)) { throw "Tool not found: $tool" }
-$code = Get-Content -Raw -Encoding UTF8 $src
+# Flatten the module shell the way MQL5 does (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$code = Get-CanonicalSourceText -Path $src
 $rep  = Get-Content -Raw -Encoding UTF8 $tool
 
 $script:pass = 0
@@ -68,11 +70,19 @@ $missing = @()
 foreach ($c in $cols) { if ($code -notmatch [regex]::Escape($c)) { $missing += $c } }
 Check 'csv-schema-is-complete' ($missing.Count -eq 0) ("missing: " + ($missing -join ','))
 
-$rowHL = ($code -match 'DoubleToString\(curHigh,_Digits\),') -and ($code -match 'DoubleToString\(curLow,_Digits\),')
+# Phase 46 moved the CSV write into PersistReverseRiskEvidence() and made it run
+# after the grade, so the row is filled from the values SAVED for that bar. The
+# intent of this check is unchanged: the High/Low of the bar itself reach the file.
+$rowHL = ($code -match 'DoubleToString\(g_rrHigh,_Digits\),') -and ($code -match 'DoubleToString\(g_rrLow,_Digits\),') -and
+         ($code -match 'g_rrHigh=curHigh;') -and ($code -match 'g_rrLow=curLow;')
 Check 'csv-writes-high-and-low' $rowHL 'forward excursion is measured from its own price data, not guessed'
 
-$perSymbol = ($code -match 'DiagOpen\("ICT_Assistant_Canonical_ReverseRisk_"\+_Symbol\+"\.csv"\)')
+$perSymbol = ($code -match 'DiagOpen\("ICT_Assistant_Canonical_ReverseRisk_"\+_Symbol\+"_"\+ChartTfCode\(\)\+"\.csv"\)')
 Check 'csv-is-per-symbol' $perSymbol 'symbols never mix inside one file'
+# Phase 47: two live charts of the same symbol used to share one file, so bars of
+# two chart timeframes were mixed inside every measurement read from this ledger.
+$perTf = ($code -match 'ChartTfCode\(\)')
+Check 'csv-is-per-timeframe' $perTf 'chart timeframes never mix inside one file'
 
 $reasons = ($code -match 'g_rrReasons=why;')
 Check 'row-carries-the-reasons' $reasons 'every added weight is reported in words'
@@ -101,17 +111,28 @@ Check 'tool-has-a-minimum-sample-size' $minN 'buckets below it are never shown a
 $insufficient = ($rep -match "'insufficient-n'")
 Check 'tool-marks-thin-buckets' $insufficient 'no rate is printed without enough samples'
 
-$fwd = ($rep -match 'Measure-Object -Property Low -Minimum') -and ($rep -match 'Measure-Object -Property High -Maximum')
-Check 'tool-measures-the-forward-move' $fwd 'adverse excursion is computed from the High/Low columns'
+# Phase 46 replaced the single adverse test with a target-vs-stop RACE: the old
+# one-condition metric could not separate (measured: label LOW 29.2% vs HIGH
+# 29.3%), so it ranked nothing. The tool must now walk the forward bars itself.
+$fwd = ($rep -match '\$hitStop = \$\(if \(\$r\.Bias -eq .BULL.\) \{ \$b\.Low') -and
+       ($rep -match '\$hitTgt  = \$\(if \(\$r\.Bias -eq .BULL.\) \{ \$b\.High')
+Check 'tool-measures-the-forward-move' $fwd 'the forward path is walked bar by bar through High/Low, not guessed'
 
-$def = ($rep -match 'moved AdverseATR ATR AGAINST the bias inside the horizon')
-Check 'tool-states-its-definition' $def 'the reported probability has an explicit definition'
+# The definition sentence wraps over two comment lines, so it is matched in two
+# pieces rather than as one span (the earlier single-span form failed on the
+# line break, not on the wording).
+$def = ($rep -match 'did price travel \+TargetATR') -and ($rep -match 'BEFORE travelling')
+Check 'tool-states-its-definition' $def 'the reported win rate has an explicit definition'
 
-$bothSides = ($rep.Contains("if (`$r.Bias -eq 'BULL')")) -and `
-              ($rep.Contains('$best = ($window | Measure-Object -Property High -Maximum).Maximum'))
-Check 'tool-handles-both-bias-directions' $bothSides 'bullish and bearish rows both measured'
+# Both legs of the race must flip with the bias (a tool that only handles the
+# bullish case would report a one-sided edge), and NEUTRAL bars must be skipped.
+$tgtOk  = ($rep -match '\$target = \$r\.Price \+ \$\(if \(\$r\.Bias -eq .BULL.\)')
+$stopOk = ($rep -match '\$stop\s+= \$r\.Price \+ \$\(if \(\$r\.Bias -eq .BULL.\)')
+$neutral = ($rep -match 'if \(\$r\.Bias -ne .BULL. -and \$r\.Bias -ne .BEAR.\) \{ continue \}')
+Check 'tool-handles-both-bias-directions' ($tgtOk -and $stopOk -and $neutral) `
+      ("target flips={0}, stop flips={1}, neutral rows skipped={2}" -f $tgtOk, $stopOk, $neutral)
 
-$snap = ($rep -match 'the adverse rate was') -and ($rep -match 'do not trust a rate here')
+$snap = ($rep -match 'the win rate was') -and ($rep -match 'do not trust a rate here')
 Check 'tool-reports-the-latest-situation' $snap 'current read + its measured historical rate (or an honest refusal)'
 
 Write-Host ''

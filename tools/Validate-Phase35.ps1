@@ -1,7 +1,9 @@
 # Validate-Phase35.ps1 - lock tool for Phase 35 (single-line risk strip)
 # ASCII-only by project rule: PowerShell 5.1 parses .ps1 as ANSI (phase-28 lesson).
 $ErrorActionPreference='Stop'
-$src = Get-Content -Raw -Encoding UTF8 '01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5'
+# Flatten the module shell the way MQL5 does (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src = Get-CanonicalSourceText -Path '01_CANONICAL_CANDIDATES/ICT_Assistant_Canonical.mq5'
 $fail=0; $pass=0
 function Assert([string]$name,[string]$pattern,[bool]$mustHave=$true){
   $found = $src -match $pattern
@@ -20,7 +22,14 @@ Assert 'input InpRiskStripWidth'       'input int\s+InpRiskStripWidth\s*=\s*640;
 Assert 'bg object ICTv13_RSTRIP_BG'    'ICTv13_RSTRIP_BG'
 Assert 'txt object ICTv13_RSTRIP_TXT'  'ICTv13_RSTRIP_TXT'
 # 3) rule: display-only - reads g_rr* state of the phase-32 engine, no parallel math
-Assert 'strip body reads g_rrLabel'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,600}?g_rrLabel'
+# Phase 46 prepended the grade fields and a width calculation to the same body,
+# so the window had to grow; the rule itself is unchanged - the strip still reads
+# the phase-32 state and now also reads the fitted grade.
+Assert 'strip body reads g_rrLabel'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,1400}?g_rrLabel'
+# Phase 48 merged the pending row into this same body and documented the merge in
+# a comment block before the string, so the window grew again. The rule itself is
+# unchanged - the strip still leads with the fitted grade.
+Assert 'strip body reads the grade'    'RenderRiskStrip\(\)\s*\{[\s\S]{0,2600}?g_grade'
 Assert 'no iATR inside strip body'     '(?s)void RenderRiskStrip\(\)[\s\S]{0,3000}iATR\(' $false
 # 4) rule: Persian channel = the proven OBJ_EDIT pipeline (raw text, mode 0)
 Assert 'renders via ExplainEditRow'    'ExplainEditRow\("ICTv13_RSTRIP_TXT"'
@@ -40,10 +49,20 @@ $cnt=([regex]::Matches($src,'RenderRiskStrip\(\);')).Count
 if($cnt -ge 2){ $script:pass++; Write-Host '  PASS  wired: >=2 call sites' -ForegroundColor Green }
 else          { $script:fail++; Write-Host '  FAIL  wired: >=2 call sites' -ForegroundColor Red }
 # 8) user's three requirements: nearest level + its type + reversal score
-Assert 'strip shows level [state] ATR' '\[%s\] %s ATR'
+# Phase 42 removed the Latin "ATR" from inside this row: the strip still shows
+# the nearest level, its state and its distance, but the distance is now spelled
+# out in Persian (فاصله ... برابر میانگین دامنه) so the row is one RTL run.
+# The word is built from codepoints because Windows PowerShell 5.1 decodes a
+# BOM-less .ps1 with the system ANSI codepage, which would mangle a literal.
+$chFe=[char]0x0641; $chSad=[char]0x0627; $chSad2=[char]0x0635; $chLam=[char]0x0644; $chHe=[char]0x0647
+$wordDist = "$chFe$chSad$chSad2$chLam$chHe"      # فاصله - "distance"
+Assert 'strip shows level [state] and its distance' ('\[%s\][^"\r\n]*' + $wordDist)
 Assert 'strip feeds from g_rrLegProg'  'g_rrLegProg\)'
 Assert 'strip shows SFP marker'        'SFP'
-Assert 'strip shows Bias prefix'       'StringFormat\("Bias: %s'
+# Phase 46: the row now LEADS with the grade; the bias field moved after it. Both
+# labels are still Latin-led, which is what kept the line from splitting.
+Assert 'strip shows Bias prefix'       'BIAS: %s'
+Assert 'strip leads with the grade'    'StringFormat\("GRADE: %s[\s\S]{0,120}?BIAS: %s'
 # strip color must come from the phase-32 engine's score (g_rrScore is owned by UpdateReverseRisk)
 Assert 'linked to phase-32 engine'     'g_rrScore>=50\? InpColorBear'
 

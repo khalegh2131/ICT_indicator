@@ -1,0 +1,34 @@
+# phase 46 -- level-type text -> family code
+# Every left column below is a DISTINCT value taken from the runtime evidence
+# file ICT_Assistant_Canonical_ReverseRisk_XAUUSD.x.csv (column LevelType), so
+# the mapping is tied to what the engine really writes, not to an invented list.
+# Right column is what tools/Fit-SignalGrade.ps1 Get-Family() produced, and what
+# RRLevelFamilyCode() in 31_SignalGrade.mqh must produce too.
+LIQ Swing Low (SSL);famLIQ
+LIQ Swing High (BSL);famLIQ
+LIQ Liquidity;famLIQ
+LIQ IPDA 20-day Old Low;famLIQ
+LIQ IPDA 40-day Old High;famLIQ
+LIQ IPDA 60-day Old Low;famLIQ
+OB Standalone (تقاضا) INT;famOB
+OB Standalone (عرضه) INT;famOB
+OB Core (تقاضا) INT;famOB
+OB Core (عرضه) INT;famOB
+OB Extreme (تقاضا);famOB
+OB Extreme (عرضه);famOB
+Breaker (تقاضا);famBREAKER
+Breaker (عرضه);famBREAKER
+Mitigation Block (تقاضا);famMITIG
+Mitigation Block (عرضه);famMITIG
+FVG Standard (صعودی);famFVG
+FVG Standard (نزولی) — وارونه‌شده;famFVG
+FVG Micro (صعودی);famFVG
+FVG Implied (صعودی);famFVG
+Volume Imbalance (صعودی);famFVGVI
+Volume Imbalance (نزولی) — وارونه‌شده;famFVGVI
+S/D DBR;famSD
+Trendline (Buy-Side بالای خط);famTL
+Trendline (Sell-Side زیر خط);famTL
+Initial Balance Low;famOTHER
+Range Liquidity (سقف رنج);famOTHER
+NONE;famOTHER

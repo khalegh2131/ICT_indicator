@@ -11,7 +11,9 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 $src  = Join-Path $root '01_CANONICAL_CANDIDATES\ICT_Assistant_Canonical.mq5'
 if (-not (Test-Path -LiteralPath $src)) { throw "Source not found: $src" }
-$code = Get-Content -Raw -Encoding UTF8 $src
+# Flatten the module shell the way MQL5 does (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$code = Get-CanonicalSourceText -Path $src
 
 $script:pass = 0
 $script:fail = 0
@@ -126,9 +128,29 @@ $tlObservable = (($code -match 'int tlOk=0, tlInv=0, tlTouch=0, tlSwept=0;') -an
                  ($code -match 'tlOk, tlInv, tlTouch, tlSwept,'))
 Check 'sweep-count-is-observable' $tlObservable 'diag header + row carry it (evidence, not a claim)'
 
-$tlExplain = ($code -match 'if\(g_trendlines\[idx\]\.swept\)\s*\r?\n\s*ExpAddWrapped\(StringFormat\(') -and `
-             ($code -match 'LIQ_TRENDLINE_H \(Buy-Side\)')
-Check 'panel-explains-the-sweep' $tlExplain 'teaching panel states the rule and the registered level'
+# Phase 42 rewrote the family's teaching text: no Latin word may sit inside a
+# Persian clause, so the old "LIQ_TRENDLINE_H (Buy-Side)" row became a Persian
+# sentence. The invariant is unchanged - the panel must still state (a) the
+# sweep rule and (b) which side of the line the liquidity sits on - so the
+# check now asserts the content, not the old English spelling.
+# Persian is built from codepoints: a .ps1 without a UTF-8 BOM is decoded with
+# the system ANSI codepage by Windows PowerShell 5.1, so a literal would turn
+# into mojibake and the check would fail for an unrelated reason.
+$chSad = [char]0x0633; $chGhaf = [char]0x0642; $chFe = [char]0x0641
+$chKaf = [char]0x06A9
+$wordCeiling = "$chSad$chGhaf$chFe"   # سقف - "ceiling" = buy-side liquidity
+$wordFloor   = "$chKaf$chFe"          # کف  - "floor"  = sell-side liquidity
+
+$tlFnStart = $code.IndexOf('void ExplainTrendline(')
+$tlFnEnd   = if ($tlFnStart -ge 0) { $code.IndexOf("`n}`n", $tlFnStart) } else { -1 }
+$tlFn = if ($tlFnStart -ge 0 -and $tlFnEnd -gt $tlFnStart) { $code.Substring($tlFnStart, $tlFnEnd - $tlFnStart) } else { '' }
+
+$tlExplain = (($code -match 'if\(g_trendlines\[idx\]\.swept\)\s*\r?\n\s*\{\s*\r?\n\s*ExpAdd\(StringFormat\(') -and `
+             ($code -match 'g_trendlines\[idx\]\.sweptTime') -and `
+             ($code -match 'g_trendlines\[idx\]\.sweptPrice') -and `
+             ($tlFn -match $wordCeiling) -and ($tlFn -match $wordFloor) -and `
+             ($code -notmatch 'LIQ_TRENDLINE_H \(Buy-Side\)'))
+Check 'panel-explains-the-sweep' $tlExplain 'teaching panel states the rule (further wick + closing back) and the registered level (sweptTime / sweptPrice), and names both sides of the line in Persian'
 
 $tlDraw = ($code -match 'OBJPROP_STYLE,g_trendlines\[i\]\.swept\?STYLE_DASH:STYLE_DOT\);')
 Check 'swept-line-is-visually-separated' $tlDraw 'dashed, not deleted (kept as history)'

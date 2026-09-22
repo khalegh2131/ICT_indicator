@@ -1,0 +1,43 @@
+# phase 46 -- fitted signal-grade table (generated, do not hand-edit)
+# provenance command (run from the repo root):
+#   powershell -NoProfile -ExecutionPolicy Bypass -File tools/Fit-SignalGrade.ps1 -Emit 05_TESTS_AND_VALIDATION/grade_coefficients.fixture.csv
+# race: +2 ATR with the bias vs -1 ATR against it, horizon 12 bars, stop wins ties
+# sample: ICT_Assistant_Canonical_ReverseRisk_XAUUSD.x.csv | rows raced=5519 | written=2026-09-22 04:30
+# NOTE: the sample lives in the terminal COMMON folder, not in the repo, so this file is the frozen proof of the fit.
+feature;key;lift
+F1;famBREAKER;0.489
+F1;famFVG;-0.101
+F1;famFVGVI;0.277
+F1;famLIQ;0.252
+F1;famMITIG;-0.154
+F1;famOB;-0.653
+F2;dist025to05;0.294
+F2;dist05to1;0.49
+F2;distGt1;0.115
+F2;distLt025;-0.04
+F3;leg50to85;0.677
+F3;legGte85;-0.028
+F3;legLt50;0.003
+F4;dolGt1;0.003
+F4;dolNone;-0.223
+F5;mtffalse;-0.033
+F5;mtftrue;0.11
+F6;sweptfalse;-0.001
+F6;swepttrue;0.032
+F7;exhEXHAUSTION_WATCH;0.046
+F7;exhEXTENDING;0.025
+F7;exhMICRO_PULLBACK;-0.078
+F7;exhMICRO_REVERSAL_CONFIRMED;-0.171
+F7;exhRANGE_OR_TRANSITION;0.112
+F7;exhREVERSAL_CONFIRMED;0.598
+F7;exhTRENDING;-0.03
+threshold;A+;0.827
+threshold;A;0.564
+threshold;B+;0.297
+threshold;B;0.106
+grade;A+;52.2;92
+grade;A;41.2;306
+grade;B+;35.5;707
+grade;B;31.2;1115
+grade;C;25.8;3299
+baseline;win;29.41;5519

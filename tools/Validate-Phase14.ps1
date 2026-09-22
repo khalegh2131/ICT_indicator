@@ -307,7 +307,10 @@ Check "self-test(bad size fixture is rejected)" ($dsCaught -eq $dsBad.Count) `
 # B) SOURCE PROOF
 # =====================================================================
 if (-not (Test-Path $Source)) { throw "source not found: $Source" }
-$src = Get-Content -LiteralPath $Source -Raw -Encoding UTF8
+# Flatten the module shell the way MQL5 does, so the anchors below still name
+# the code that compiles (see tools/CanonicalSource.ps1).
+. "$PSScriptRoot/CanonicalSource.ps1"
+$src = Get-CanonicalSourceText -Path $Source
 "=== B) SOURCE PROOF ($([System.IO.Path]::GetFileName($Source)))"
 
 # B1 -- the blanket wipe is gone from the redraw path.
